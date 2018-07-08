@@ -1,0 +1,6 @@
+*.sublime-project
+*.sublime-workspace
+*.pyc
+*.pyo
+*__pycache__
+alias ipy=python

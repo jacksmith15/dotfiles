@@ -1,0 +1,16 @@
+[alias]
+	b = branch
+	s = status
+	graph = log --graph --decorate --color
+	oops = commit --amend
+	oneline = log --oneline --decorate --color
+	adog = log --all --decorate --oneline --graph
+	dog = log --decorate --oneline --graph
+[push]
+	default = simple
+[user]
+	name = Jack Smith
+	email = jack.smith@elucidata.co.uk
+[core]
+	excludesfile = $HOME/.gitignore_global
+	editor = vim

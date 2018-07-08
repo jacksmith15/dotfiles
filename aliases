@@ -1,0 +1,41 @@
+# Base aliases
+alias l="ls -al --color"
+alias ll="ls -la --color"
+alias c="clear"
+alias psgrep="ps aux | grep"
+alias ff="grep -Hni"
+alias using-port="netstat -tulpn | grep --color "
+
+
+# Sublime
+alias openproject="subl --project project.sublime-project"
+alias open-project="subl --project"
+
+# Git
+alias gti=git
+alias gd="git difftool -t meld -y"
+alias glggo="git log --all --decorate --oneline --graph"
+alias reftime="git reflog --date=iso --oneline"
+
+# Python
+alias mkvirtualenv3="mkvirtualenv --python=/usr/bin/python3"
+alias ipy=python
+
+# Docker
+alias dcom=docker-compose
+alias dcom-rebuild="dcom stop;dcom build;dcom up -d"
+
+# The Fuck
+alias f=fuck
+
+# Enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto --group-directories-first'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+else
+    echo "Warning: dircolors not found"
+fi
+
