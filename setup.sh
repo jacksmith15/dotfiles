@@ -14,12 +14,6 @@ dotfilesdir=$(pwd)
 backupdir=~/.dotfiles.orig
 
 dotfiles=(
-    # .editorconfig
-    # .exports
-    # .functions
-    # .gemrc
-    # .wgetrc
-    # .Xresources
     aliases
     bashrc
     dircolors
@@ -32,12 +26,7 @@ dotfiles=(
     zshrc
 )
 dotfiles_config=(
-    # .alacritty
-    # .compton
-    # .dunst
-    # .htop
-    # .i3blocks
-    # .rofi
+    # example-config
 )
 
 ## key-value for non-default zsh plugins. plugin name -> plugin repo.

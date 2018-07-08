@@ -47,6 +47,9 @@ source "$ZSH/oh-my-zsh.sh"
 ## Add timetrap completions
 fpath=(/var/lib/gems/2.5.0/gems/timetrap-1.15.1/completions/zsh $fpath)
 
+## Base16 Shell.
+[ -n "$PS1" ] && [ -s "$BASE16_SHELL/profile_helper.sh" ] && eval "$("$BASE16_SHELL/profile_helper.sh")"
+
 
 ################################################################################
 # User configuration
