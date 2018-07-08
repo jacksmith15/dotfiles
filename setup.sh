@@ -72,6 +72,9 @@ requirements() {
     # Oh-my-zsh
     oh-my-zsh
 
+    # Sublime Text
+    sublime-text-3
+
     # Base16 Shell
     base-16-shell
 }
@@ -104,9 +107,47 @@ oh-my-zsh-plugins() {
             git clone "${zsh_plugins[$plugin]}" $target
         else
             cd "$ZSH_CUSTOM/plugins/$plugin" || exit 1
-            git pull
+            git pull origin master
         fi
     done
+}
+
+sublime-text-3() {
+    if sudo test -f /usr/bin/subl
+    then
+        echo -e $magenta"\n Updating Sublime Text 3... \n"$white
+        sudo apt-get install --only-upgrade | grep "to upgrade"
+        sublime-text-3-config
+    else
+        echo -e $magenta"\n Installing Sublime Text 3... \n"$white
+        wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+        sudo apt-get install apt-transport-https
+        echo "deb https://download.sublimetext.com/ apt/dev/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+        sudo apt-get update
+        sudo apt-get install sublime-text | grep "to upgrade"
+        sublime-text-3-config
+    fi
+}
+
+sublime-text-3-config() {
+    source=git@github.com:jacksmith15/SublimeUser.git
+    target="$HOME"/.config/sublime-text-3/Packages/User
+    if [ ! -d "$target" ]
+    then
+        echo -e $magenta"\n Cloning Sublime Text Config.. \n"$white
+        mkdir "$target"
+        git clone "$source" "$target"
+    elif [ ! -d "$target"/.git ]
+    then
+        echo -e $magenta"\n Cloning Sublime Text Config.. \n"$white
+        mv "$target" "$target".bak
+        mkdir "$target"
+        git clone "$source" "$target"
+    else
+        echo -e $magenta"\n Updating Sublime Text 3 config... \n"$white
+        cd "$target"
+        git pull
+    fi
 }
 
 base-16-shell() {
