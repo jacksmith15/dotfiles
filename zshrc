@@ -293,6 +293,18 @@ function tgit {
 ################################################################################
 # Final tasks.
 
+# If ENV is set, and a .env file exists, source that .env file.
+if [ -f "$HOME"/."$ENV".env ]
+then
+  source "$HOME"/."$ENV".env
+fi
+
+# If local overrides exist, source those last
+if [ -f "$HOME"/.local.env ]
+then
+  source "$HOME"/.local.env
+fi
+
 # Start the tmux session.
 if command -v tmux>/dev/null; then
   [[ ! $TERM =~ screen ]] && [ -z "$TMUX" ] && exec tmux
