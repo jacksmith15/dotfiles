@@ -89,6 +89,8 @@ oh-my-zsh() {
         oh-my-zsh-plugins
     else
         echo -e $magenta"\n Updating oh-my-zsh... \n"$white
+        cd ~/.oh-my-zsh
+        git reset HEAD --hard
         /bin/sh ~/.oh-my-zsh/tools/upgrade.sh
         echo -e $magenta"\n Updating zsh plugins... \n"$white
         oh-my-zsh-plugins
