@@ -205,7 +205,7 @@ install() {
         # Backup to ~/.dotfiles.orig
         for dots in "${dotfiles[@]}"
         do
-            /bin/cp -rf ~/${dots} $backupdir &> /dev/null
+            /bin/cp -rf ~/.${dots} $backupdir &> /dev/null
         done
 
         # Backup some folder in ~/.config to ~/.dotfiles.orig/.config
@@ -229,7 +229,7 @@ install() {
     # Install config.
     for dots in "${dotfiles[@]}"
     do
-        /bin/rm -rf ~/"${dots}"
+        /bin/rm -rf ~/."${dots}"
         /bin/ln -fs "$dotfilesdir/${dots}" ~/."${dots}"
     done
 
