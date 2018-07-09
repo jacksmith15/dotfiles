@@ -26,11 +26,10 @@ dotfiles=(
     zshrc
 )
 dotfiles_config=(
-    # example-config
+    mypy/mypy.ini
 )
 
 ## key-value for non-default zsh plugins. plugin name -> plugin repo.
-typeset -A extra_plugins
 declare -A zsh_plugins=(
   [zsh-autosuggestions]=https://github.com/zsh-users/zsh-autosuggestions
 )
@@ -77,6 +76,9 @@ requirements() {
 
     # Base16 Shell
     base-16-shell
+
+    # MyPy Stubs
+    mypy-stubs
 }
 
 oh-my-zsh() {
@@ -144,7 +146,7 @@ sublime-text-3-config() {
         mkdir "$target"
         git clone "$source" "$target"
     else
-        echo -e $magenta"\n Updating Sublime Text 3 config... \n"$white
+        echo -e $magenta"\n Updating Sublime Text 3 config.. \n"$white
         cd "$target"
         git pull
     fi
@@ -153,14 +155,43 @@ sublime-text-3-config() {
 base-16-shell() {
     if [ ! -d "$HOME/.config/base16-shell" ]
     then
-        echo "cloning base16-shell..."
+        echo -e $magenta"\n Cloning base16-shell.."
         git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
     else
         echo -e $magenta"\n Updating base16-shell... \n"$white
-        cd ~/.config/base16-shell
+        cd ~/.config/base16-shell || exit 1
         git pull
         ./colortest
     fi
+}
+
+mypy-stubs() {
+    declare -A target_stubs=(
+        [sqlalchemy]=git@github.com:JelleZijlstra/sqlalchemy-stubs.git
+    )
+    MYPY_CONFIG=~/.config/mypy
+    if [ ! -d "$MYPY_CONFIG" ]
+    then
+        mkdir $MYPY_CONFIG
+    fi
+    MYPY_STUBS="$MYPY_CONFIG"/stubs
+    if [ ! -d "$MYPY_STUBS" ]
+    then
+        mkdir $MYPY_STUBS
+    fi
+    for stub in "${!target_stubs[@]}"
+    do
+        stub_dir="$MYPY_STUBS"/"$stub"
+        if [ ! -d "$stub_dir" ]
+        then
+            echo -e $magenta"\n Cloning mypy stubs: $stub.."$white
+            git clone "${target_stubs[$stub]}" "$stub_dir"
+        else
+            echo -e $magenta"\n Updating mypy stubs: $stub.."$white
+            cd "$stub_dir" || exit 1
+            git pull
+        fi
+    done
 }
 
 install() {

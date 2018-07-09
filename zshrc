@@ -113,6 +113,16 @@ pip install pipenv &> /dev/null
 ## The Fuck
 pip3 install thefuck &> /dev/null
 
+## MyPy
+pip install mypy &>/dev/null
+export MYPY_CONF=~/.config/mypy
+for stub in "$MYPY_CONF"/stubs/*
+do
+  inner_directory="$(basename "$stub")"
+  export MYPYPATH=$MYPYPATH:$stub/$inner_directory
+done
+
+
 
 ################################################################################
 # Node
