@@ -212,6 +212,11 @@ function myip {
   echo # Newline.
 }
 
+function hostsip {
+  local host="$1"
+  echo $(cat /etc/hosts | grep "$host") | awk '{print $1;}'
+}
+
 # Send a PUT request with JSON body.
 function json_put {
   local url=$1
