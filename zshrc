@@ -212,9 +212,16 @@ function myip {
   echo # Newline.
 }
 
+### Get the ip of an alias in my hosts file.
 function hostsip {
   local host="$1"
   echo $(cat /etc/hosts | grep "$host") | awk '{print $1;}'
+}
+
+### Get the string representation of an alias in my aliases.
+function f-alias {
+  local alias=$1
+  grep "$alias" "$HOME"/.zsh_aliases
 }
 
 # Send a PUT request with JSON body.
@@ -275,21 +282,22 @@ function vsubl {
   "
 }
 
-# Show the base commit of a potential rebase target.
+## Git commands:
+### Show the base commit of a potential rebase target.
 function grbb {
   local upstream=$1
   local hash=`git rev-list $upstream..HEAD | tail -1`
   git show "${hash}"
 }
 
-# Graph of rebase.
+### Graph of rebase.
 function grbbg {
   local upstream=$1
   local hash=$upstream..HEAD
   git log --decorate --oneline --graph "$hash"
 }
 
-# Timetrap in using current git branch as tag.
+### Timetrap in using current git branch as tag.
 function tgit {
   local here=`git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,'`
   t in "$here"
