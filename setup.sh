@@ -79,6 +79,9 @@ requirements() {
 
     # MyPy Stubs
     mypy-stubs
+
+    # Gnome extensions
+    gnome-extensions
 }
 
 oh-my-zsh() {
@@ -194,6 +197,24 @@ mypy-stubs() {
             git pull
         fi
     done
+}
+
+gnome-extensions() {
+    GNOME_EXTENSIONS=~/.local/share/gnome-shell/extensions
+    if pgrep -f gnome>/dev/null
+    then
+        if [ ! -d "$GNOME_EXTENSIONS"/.git ]
+        then
+            echo -e $magenta"\n Cloning gnome extensions.."$white
+            git clone git@github.com:jacksmith15/gnome-extensions.git "$GNOME_EXTENSIONS"
+        else
+            echo -e $magenta"\n Updating gnome extensions.."$white
+            cd "$GNOME_EXTENSIONS" || exit 1
+            git pull
+        fi
+    else
+        echo -e $red"\n Gnome not found.."$white
+    fi
 }
 
 install() {
