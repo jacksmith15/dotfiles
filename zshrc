@@ -67,6 +67,9 @@ export ARCHFLAGS="-arch x86_64"
 ## ssh
 export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
 
+## sublime project directory
+export SUBLIME_PROJECT_DIR="$HOME"/proj
+
 ## secret variables
 source ~/.zsh_secrets
 
@@ -280,6 +283,26 @@ function vsubl {
     fi
     rsub $file_path
   "
+}
+
+## Sublime management commands:
+### Open a sublime project by name
+function proj {
+  local projectname
+  projectname=$1
+  subl --project "$SUBLIME_PROJECT_DIR"/"$projectname".sublime-project
+}
+
+### Make a sublime project for currnet directory
+function mkproj {
+  local dir
+  local name
+  local projfile
+  dir=${PWD}
+  name=${PWD##*/}
+  projfile="$SUBLIME_PROJECT_DIR"/"$name".sublime-project
+  touch "$projfile"
+  echo "{\n\"folders\":\n  [\n    {\n      \"path\": \"$dir\"\n    }\n  ]\n}" >> "$projfile"
 }
 
 ## Git commands:
