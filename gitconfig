@@ -4,6 +4,7 @@
 	graph = log --graph --decorate --color
 	oops = commit --amend
 	oneline = log --oneline --decorate --color
+    o = log --oneline --decorate --color
 	adog = log --all --decorate --oneline --graph
 	dog = log --decorate --oneline --graph
 [push]
