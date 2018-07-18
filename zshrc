@@ -91,7 +91,10 @@ bindkey '^[f' kill-word
 PYTHON_VERSION=3.6.5
 
 ## Virtualenv
-pip install virtualenvwrapper &> /dev/null
+if python -c "import virtualenvwrapper";
+then
+    pip install virtualenvwrapper &> /dev/null
+fi
 export WORKON_HOME=$HOME/venvs
 export PROJECT_HOME=$HOME/repo
 source /usr/local/bin/virtualenvwrapper.sh
@@ -111,19 +114,28 @@ then
 fi
 
 ## Pipenv
-pip install pipenv &> /dev/null
+if python -c "import pipenv"
+then
+    pip install pipenv &> /dev/null
+fi
 
 ## The Fuck
-pip3 install thefuck &> /dev/null
+if python -c "import thefuck";
+then
+    pip3 install thefuck &> /dev/null
+fi
 
 ## MyPy
-pip install mypy &>/dev/null
-export MYPY_CONF=~/.config/mypy
-for stub in "$MYPY_CONF"/stubs/*
-do
-  inner_directory="$(basename "$stub")"
-  export MYPYPATH=$MYPYPATH:$stub/$inner_directory
-done
+if python -c "import mypy";
+then
+    pip install mypy &>/dev/null
+fi
+# export MYPY_CONF=~/.config/mypy
+# for stub in "$MYPY_CONF"/stubs/*
+# do
+#   inner_directory="$(basename "$stub")"
+#   export MYPYPATH=$MYPYPATH:$stub/$inner_directory
+# done
 
 
 
@@ -225,6 +237,12 @@ function hostsip {
 function f-alias {
   local alias=$1
   grep "$alias" "$HOME"/.zsh_aliases
+}
+
+### Get the description of a function defined in zshrc.
+function f-func {
+  local func=$1
+  grep -B 1 "$func" "$$HOME"/.zshrc
 }
 
 # Send a PUT request with JSON body.
