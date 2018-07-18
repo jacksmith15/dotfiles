@@ -22,6 +22,7 @@ dotfiles=(
     oh-my-zsh/custom/themes
     tmux.conf
     tmuxinator
+    vim
     vimrc
     zshrc
 )
