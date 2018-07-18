@@ -23,4 +23,4 @@ filetype on
 filetype plugin on
 
 syntax on
-colorscheme monokai
+colorscheme delek
