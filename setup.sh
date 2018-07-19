@@ -154,7 +154,22 @@ sublime-text-3-config() {
     else
         echo -e $magenta"\n Updating Sublime Text 3 config.. \n"$white
         cd "$target"
-        git pull
+        git pull --ff-only
+    fi
+}
+
+wiki() {
+    source=git@github.com:jacksmith15/wiki.git
+    target="$HOME"/wiki
+    if [ ! -d "$target" ]
+    then
+        echo -e $magenta"\n Cloning wiki files.. \n"$white
+        mkdir "$target"
+        git clone "$source" "$target"
+    else
+        echo -e $magenta"\n Updating wiki \n"$white
+        cd "$target"
+        git pull --ff-only
     fi
 }
 
