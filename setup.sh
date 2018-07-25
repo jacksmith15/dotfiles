@@ -94,7 +94,7 @@ oh-my-zsh() {
     else
         echo -e $magenta"\n Updating oh-my-zsh... \n"$white
         cd ~/.oh-my-zsh
-        git reset HEAD --hard
+        # git reset HEAD --hard
         /bin/sh ~/.oh-my-zsh/tools/upgrade.sh
         echo -e $magenta"\n Updating zsh plugins... \n"$white
         oh-my-zsh-plugins
@@ -210,7 +210,7 @@ mypy-stubs() {
         else
             echo -e $magenta"\n Updating mypy stubs: $stub.."$white
             cd "$stub_dir" || exit 1
-            git pull
+            git pull --ff-only
         fi
     done
 }
@@ -219,14 +219,20 @@ gnome-extensions() {
     GNOME_EXTENSIONS=~/.local/share/gnome-shell/extensions
     if pgrep -f gnome>/dev/null
     then
-        if [ ! -d "$GNOME_EXTENSIONS"/.git ]
+        if [ ! -d "$GNOME_EXTENSIONS" ]
         then
+            mkdir -p "$GNOME_EXTENSIONS"
+            echo -e $magenta"\n Cloning gnome extensions.."$white
+            git clone git@github.com:jacksmith15/gnome-extensions.git "$GNOME_EXTENSIONS"
+        elif [ ! -d "$GNOME_EXTENSIONS"/.git ]
+        then
+            mv "$GNOME_EXTENSIONS" "$GNOME_EXTENSIONS".bak
             echo -e $magenta"\n Cloning gnome extensions.."$white
             git clone git@github.com:jacksmith15/gnome-extensions.git "$GNOME_EXTENSIONS"
         else
             echo -e $magenta"\n Updating gnome extensions.."$white
             cd "$GNOME_EXTENSIONS" || exit 1
-            git pull
+            git pull --ff-only
         fi
     else
         echo -e $red"\n Gnome not found.."$white
