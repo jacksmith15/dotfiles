@@ -24,6 +24,7 @@ dotfiles=(
     tmuxinator
     vim
     vimrc
+    zsh/completions
     zshrc
 )
 dotfiles_config=(
