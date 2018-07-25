@@ -83,6 +83,9 @@ requirements() {
 
     # Gnome extensions
     gnome-extensions
+
+    # Wiki
+    wiki
 }
 
 oh-my-zsh() {

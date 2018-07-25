@@ -203,7 +203,7 @@ function google {
 }
 
 # Search on wikipedia.
-function wiki {
+function wikipedia {
   local base_url="https://en.wikipedia.org/w/index.php?search="
   local search=$(urlencode "${(j: :)@}")
   xdg-open "$base_url""$search"
