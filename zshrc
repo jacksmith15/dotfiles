@@ -321,8 +321,11 @@ function mkproj {
   dir=${PWD}
   name=${PWD##*/}
   projfile="$SUBLIME_PROJECT_DIR"/"$name".sublime-project
-  touch "$projfile"
-  echo "{\n\"folders\":\n  [\n    {\n      \"path\": \"$dir\"\n    }\n  ]\n}" >> "$projfile"
+  if [ ! -f "$projfile" ]
+  then
+    touch "$projfile"
+    echo "{\n\"folders\":\n  [\n    {\n      \"path\": \"$dir\"\n    }\n  ]\n}" >> "$projfile"
+  fi
 }
 
 ### List sublime projects
