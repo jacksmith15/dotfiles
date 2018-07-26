@@ -325,6 +325,11 @@ function mkproj {
   echo "{\n\"folders\":\n  [\n    {\n      \"path\": \"$dir\"\n    }\n  ]\n}" >> "$projfile"
 }
 
+### List sublime projects
+function lsproj {
+  find $SUBLIME_PROJECT_DIR -name "*.sublime-project" -exec basename {} .sublime-project \; 
+}
+
 ## Git commands:
 ### Show the base commit of a potential rebase target.
 function grbb {
