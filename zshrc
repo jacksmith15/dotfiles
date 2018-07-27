@@ -305,6 +305,14 @@ function vsubl {
   "
 }
 
+## Python source code
+### Clean a sub tree
+function py-clean {
+  local dir
+  dir="$1"
+  find "$dir" -name "*.pyc" -exec rm -f {} \;
+}
+
 ## Sublime management commands:
 ### Open a sublime project by name
 function proj {
