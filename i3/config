@@ -13,7 +13,7 @@ set $mod Mod4
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:monospace 8
+font pango:Input Mono 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -120,7 +120,7 @@ bindsym $mod+Shift+0 move container to workspace 10
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
+# exits i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # resize window (you can also use the mouse for that)
@@ -153,7 +153,34 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bar {
     status_command i3blocks
+    font pango: Input Mono 8
+    bindsym button4         nop
+    bindsym button5         nop
+    position                bottom
+    tray_output             primary
+    separator_symbol        "·"
+    workspace_buttons       yes
+    strip_workspace_numbers yes
+
+    colors {
+        background  #212121
+        statusline  #DDDDDD
+        separator   #666666
+        # class             border  backgr. text
+        focused_workspace   #2B83A6 #2B83A6 #FFFFFF
+        active_workspace    #212121 #212121 #FFFFFF
+        inactive_workspace  #212121 #212121 #86888C
+        urgent_workspace    #D64E4E #D64E4E #FFFFFF
+    }
 }
 
-exec gnome-settings-daemon
+exec --no-startup-id gnome-settings-daemon
+exec --no-startup-id nm-applet
 
+# class                 border  bground text    indicator child_border
+client.focused          #2B83A6 #2B83A6 #FFFFFF #DDDDDD   #2B83A6
+client.focused_inactive #212121 #212121 #86888C #292D2E   #5A5A5A
+client.unfocused        #212121 #212121 #86888C #292D2E   #5A5A5A
+client.urgent           #D64E4E #D64E4E #FFFFFF #D64E4E   #D64E4E
+client.placeholder      #212121 #0C0C0C #FFFFFF #212121   #262626
+client.background       #212121
