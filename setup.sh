@@ -29,6 +29,7 @@ dotfiles=(
 )
 dotfiles_config=(
     mypy/mypy.ini
+    i3
 )
 
 ## key-value for non-default zsh plugins. plugin name -> plugin repo.
