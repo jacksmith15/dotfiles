@@ -258,7 +258,7 @@ install() {
         done
 
         # Backup some folder in ~/.config to ~/.dotfiles.orig/.config
-        for dots_conf in "${dotfiles_config[@]//./}"
+        for dots_conf in "${dotfiles_config[@]}"
         do
             /bin/cp -rf ~/.config/${dots_conf} $backupdir/.config &> /dev/null
         done
@@ -286,8 +286,8 @@ install() {
     mkdir -p ~/.config
     for dots_conf in "${dotfiles_config[@]}"
     do
-        /bin/rm -rf ~/.config/${dots_conf[@]//./}
-        /bin/ln -fs "$dotfilesdir/${dots_conf}" ~/.config/${dots_conf[@]//./}
+        /bin/rm -rf ~/.config/${dots_conf[@]}
+        /bin/ln -fs "$dotfilesdir/${dots_conf}" ~/.config/${dots_conf[@]}
     done
 
     echo -e $blue"New dotfiles is installed!\n"$white >&2
@@ -305,7 +305,7 @@ uninstall() {
             /bin/rm -rf $backupdir/${dots}
         done
 
-        for dots_conf in "${dotfiles_config[@]//./}"
+        for dots_conf in "${dotfiles_config[@]}"
         do
             /bin/rm -rf ~/.config/$dots_conf
             /bin/cp -rf $backupdir/.config/${dots_conf} ~/.config &> /dev/null
