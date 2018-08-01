@@ -20,6 +20,7 @@ dotfiles=(
     gitconfig
     gitignore_global
     oh-my-zsh/custom/themes
+    timetrap.yml
     tmux.conf
     tmuxinator
     vim

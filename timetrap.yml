@@ -1,0 +1,15 @@
+---
+database_file: "/home/jack/.timetrap.db"
+round_in_seconds: 900
+append_notes_delimiter: ";"
+formatter_search_paths:
+- "/home/jack/.timetrap/formatters"
+default_formatter: text
+auto_sheet: dotfiles
+auto_sheet_search_paths:
+- "/home/jack/.timetrap/auto_sheets"
+default_command: 
+auto_checkout: true
+require_note: false
+note_editor: false
+week_start: Monday
