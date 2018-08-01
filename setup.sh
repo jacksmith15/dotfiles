@@ -302,6 +302,8 @@ install() {
         /bin/ln -fs "$dotfilesdir/${dots_conf}" ~/.config/${dots_conf[@]}
     done
 
+    # Attach symlinks for dropbox?
+
     echo -e $blue"New dotfiles is installed!\n"$white >&2
     echo "There may be some errors when Terminal is restarted." >&2
     echo "Please read the error messages with care and make sure all packages are installed." >&2
