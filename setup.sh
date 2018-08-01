@@ -89,6 +89,9 @@ requirements() {
 
     # Wiki
     wiki
+
+    # Dropbox
+    dropbox
 }
 
 oh-my-zsh() {
@@ -243,6 +246,13 @@ gnome-extensions() {
     else
         echo -e $red"\n Gnome not found.."$white
     fi
+}
+
+dropbox() {
+    echo -e $magenta"Installing dropbox..."$white
+    DROPBOX_FOLDER=~/Dropbox
+    mkdir -p DROPBOX_FOLDER
+    sudo apt install nautilus-dropbox
 }
 
 install() {
