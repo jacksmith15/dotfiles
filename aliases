@@ -6,7 +6,6 @@ alias psgrep="ps aux | grep"
 alias ff="grep -Hni"
 alias using-port="netstat -tulpn | grep --color "
 
-
 # Sublime
 alias openproject="subl --project project.sublime-project"
 alias open-project="subl --project"

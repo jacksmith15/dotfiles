@@ -191,12 +191,12 @@ fi
 ################################################################################
 # Custom Utility functions.
 
-# Backup a file - maybe make this do folders?
+### Backup a file - maybe make this do folders?
 bk() {
   cp -a "$1" "${1}_$(date --iso-8601=seconds).bk"
 }
 
-# Search on google.
+### Search on google.
 function google {
   local base_url="https://www.google.com/search?q="
   local search=$(urlencode "${(j: :)@}")
@@ -204,14 +204,14 @@ function google {
 
 }
 
-# Search on wikipedia.
+### Search on wikipedia.
 function wikipedia {
   local base_url="https://en.wikipedia.org/w/index.php?search="
   local search=$(urlencode "${(j: :)@}")
   xdg-open "$base_url""$search"
 }
 
-# Get my public IP.
+### Get my public IP.
 function myip {
   local api
   case "$1" in
