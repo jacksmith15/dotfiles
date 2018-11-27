@@ -23,6 +23,9 @@ alias ipy=python
 # Docker
 alias dcom=docker-compose
 alias dcom-rebuild="dcom stop;dcom build;dcom up -d"
+alias dcl=docker-compose logs
+alias dcf=docker-compose logs -f
+alias dcr=docker-compose run --rm
 
 # The Fuck
 alias f=fuck

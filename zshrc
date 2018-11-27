@@ -364,7 +364,7 @@ function grbbg {
 
 ### Timetrap in using current git branch as tag.
 function tgit {
-  local here=`git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,'`
+  local here=`git symbolic-ref HEAD | sed -e 's,refs/heads/[a-z]*/\(.*\),\1,'`
   t in "$here"
 }
 
