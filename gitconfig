@@ -7,6 +7,7 @@
     o = log --oneline --decorate --color
 	adog = log --all --decorate --oneline --graph
 	dog = log --decorate --oneline --graph
+	dateline = log --pretty=format:"%C(yellow)%h %Cblue%>(12)%ad %Cgreen%<(7)%aN%Cred%d %Creset%s"
 [push]
 	default = simple
 [user]

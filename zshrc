@@ -368,6 +368,23 @@ function tgit {
   t in "$here"
 }
 
+### Tmux CI
+function localci {
+  local type_check="bash test.sh -ni -t"
+  local lint="bash test.sh -ni -p"
+  local unit="bash test.sh -ni -u"
+  local component="bash test.sh -ni -ct"
+  local integration="make integration"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$type_check' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$lint' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$unit' --wait"
+  tmux select-layout tiled
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$component' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$integration' --wait"
+  tmux select-layout tiled
+  htop
+}
+
 ################################################################################
 # Final tasks.
 
@@ -389,3 +406,4 @@ if command -v tmux>/dev/null; then
 fi
 
 eval "$(thefuck --alias)"
+eval "$(direnv hook zsh)"
