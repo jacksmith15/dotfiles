@@ -2,7 +2,8 @@
 # ENV and ZSH set-up..
 
 ## Path and Locale.
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export GOPATH=/home/jack/go
+export PATH=$HOME/bin:/usr/local/bin:$PATH:$GOPATH/bin
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
 

@@ -75,6 +75,9 @@ requirements() {
     # Oh-my-zsh
     oh-my-zsh
 
+    # Tmux Plugin Manager
+    tmux-plugin-manager
+
     # Sublime Text
     sublime-text-3
 
@@ -127,6 +130,20 @@ oh-my-zsh-plugins() {
             git pull origin master
         fi
     done
+}
+
+tmux-plugin-manager() {
+    target="$HOME/.tmux/plugins/tpm"
+    if sudo test -f $target
+    then
+        echo -e $magenta"\n Updating Tmux Plugin Manager... \n"$white
+        cd "$target"
+        git pull
+    else
+        echo -e $magenta"\n Cloning Tmux Plugin Manager... \n"$white
+        mkdir -p $HOME/.tmux/plugins
+        git clone https://github.com/tmux-plugins/tpm $target
+    fi
 }
 
 sublime-text-3() {
