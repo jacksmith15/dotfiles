@@ -16,6 +16,7 @@ alias gd="git difftool -t meld -y"
 alias glggo="git log --all --decorate --oneline --graph"
 alias reftime="git reflog --date=iso --oneline"
 alias dateline='log --pretty=format:"%C(yellow)%h %Cblue%>(12)%ad %Cgreen%<(7)%aN%Cred%d %Creset%s"'
+alias gs=gst
 
 # Python
 alias mkvirtualenv3="mkvirtualenv --python=/usr/bin/python3"
