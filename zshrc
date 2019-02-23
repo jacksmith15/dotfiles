@@ -73,6 +73,9 @@ export SUBLIME_CONFIG="$HOME"/.config/sublime-text-3/Packages/User
 ## sublime project directory
 export SUBLIME_PROJECT_DIR="$HOME"/proj
 
+## jira url
+export JIRA_URL="https://jira.extge.co.uk"
+
 ## secret variables
 source ~/.zsh_secrets
 
@@ -369,6 +372,38 @@ function tgit {
   t in "$here"
 }
 
+### JIRA ticket open
+function ticket {
+  local code
+  if [[ "$#" > 0 ]]; then
+    code=$1
+  else
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    code=$(echo $current_branch | sed -rn 's@^[a-zA-Z0-9_-]+\/([a-zA-Z0-9-]+)\/[a-zA-Z0-9_-]+$@\1@p')
+  fi
+  xdg-open "$JIRA_URL/browse/$code"
+}
+
+### JIRA ticket from branch
+function
+
+### Tmux CI
+function localci {
+  local type_check="bash test.sh -ni -t"
+  local lint="bash test.sh -ni -p"
+  local unit="bash test.sh -ni -u"
+  local component="bash test.sh -ni -ct"
+  local integration="make integration"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$type_check' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$lint' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$unit' --wait"
+  tmux select-layout tiled
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$component' --wait"
+  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$integration' --wait"
+  tmux select-layout tiled
+  htop
+}
+
 ################################################################################
 # Final tasks.
 
@@ -390,3 +425,4 @@ if command -v tmux>/dev/null; then
 fi
 
 eval "$(thefuck --alias)"
+eval "$(direnv hook zsh)"
