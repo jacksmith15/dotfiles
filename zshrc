@@ -198,7 +198,7 @@ fi
 ### Load .env into current shell
 function load-env {
   local environment="$1"
-  export "$(cat .env."${environment}")"
+  export "$(cat .env."${environment}" | xargs)"
 }
 
 ### Backup a file - maybe make this do folders?
