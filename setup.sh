@@ -20,6 +20,8 @@ dotfiles=(
     gitconfig
     gitignore_global
     oh-my-zsh/custom/themes
+    task
+    taskrc
     timetrap.yml
     tmux.conf
     tmuxinator
@@ -95,6 +97,9 @@ requirements() {
 
     # Dropbox
     dropbox
+
+    # Taskwarrior
+    taskwarrior
 }
 
 oh-my-zsh() {
@@ -270,6 +275,19 @@ dropbox() {
     DROPBOX_FOLDER=~/Dropbox
     mkdir -p DROPBOX_FOLDER
     sudo apt install nautilus-dropbox
+}
+
+taskwarrior() {
+    echo -e $magenta"Installing taskwarrior"$white
+    if sudo test -f /usr/bin/task
+    then
+        echo -e $magenta"\n Updating Taskwarrior... \n"$white
+        sudo apt-get install --only-upgrade taskwarrior | grep 'taskwarrior\|to upgrade'
+    else
+        echo -e $magenta"\n Installing Taskwarrior... \n"$white
+        sudo apt-get update
+        sudo apt-get install taskwarrior | grep 'taskwarrior\|to upgrade'
+    fi
 }
 
 install() {
