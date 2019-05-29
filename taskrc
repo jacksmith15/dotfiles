@@ -29,3 +29,9 @@ data.location=~/.task
 #include /usr/share/taskwarrior/solarized-light-256.theme
 #include /usr/share/taskwarrior/no-color.theme
 
+taskd.certificate=~/.zsh_secrets/taskwarrior-in-the-am/private.certificate.pem
+taskd.key=~/.zsh_secrets/taskwarrior-in-the-am/private.key.pem
+taskd.ca=~/.zsh_secrets/taskwarrior-in-the-am/ca.cert.pem
+taskd.server=taskwarrior.inthe.am:53589
+taskd.credentials=inthe_am/jack.smith/e6dd63f3-8558-42f9-aae3-a84460bd8760
+taskd.trust=ignore hostname

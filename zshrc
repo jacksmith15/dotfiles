@@ -40,6 +40,7 @@ plugins=(
   pip
   python
   sublime
+  taskwarrior
   thefuck
   urltools
   zsh-autosuggestions
