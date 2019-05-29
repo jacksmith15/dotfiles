@@ -20,7 +20,6 @@ dotfiles=(
     gitconfig
     gitignore_global
     oh-my-zsh/custom/themes
-    task
     taskrc
     timetrap.yml
     tmux.conf

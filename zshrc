@@ -20,6 +20,8 @@ export UPDATE_ZSH_DAYS=15
 
 ## Sensible default for use by `.env` files.
 export ENV=dev
+export DROPBOX_FOLDER=~/Dropbox
+export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## Uncomment the following line to enable command auto-correction.
 ## ENABLE_CORRECTION="true"

@@ -1,6 +1,0 @@
-[description:"Review George PR" end:"1559119467" entry:"1559117646" modified:"1559119467" project:"NDMS" status:"completed" tags:"george,next" uuid:"53decb6c-0ef9-4b0a-a101-d6f1690b7f03"]
-[description:"Fix integration tests config" end:"1559118710" entry:"1559118554" modified:"1559118710" priority:"H" status:"completed" tags:"next" uuid:"9e652f73-6528-4ea0-b764-5564628f4372"]
-[description:"Review NTOS-3145" end:"1558693373" entry:"1558692822" modified:"1558693373" project:"NTOS" status:"completed" tags:"ollie,spine" uuid:"db2d757a-61f2-4cc0-83f7-2c5c42b9e20d"]
-[description:"Write testing output report" end:"1558602005" entry:"1558599486" modified:"1558602005" project:"Reporting.QA" status:"completed" tags:"mattj,hrid" uuid:"69351519-fec4-4744-89fd-7356be5ef033"]
-[description:"Review PR for NTOS-3385" end:"1558598546" entry:"1558597873" modified:"1558598546" project:"NTOS" status:"completed" tags:"review,ollie" uuid:"e1020257-2726-44e2-8047-4f28c65d9569"]
-[description:"Review Ollie\\'s PR for NTOS-3385 which adds ODS codes for managing entities" end:"1558539451" entry:"1558536522" modified:"1558539511" project:"NTOS" status:"completed" tags:"review,ollie,next" uuid:"c22dc8ce-ed93-4ff7-a2ef-faae34ea62cf"]

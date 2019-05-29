@@ -1,8 +1,0 @@
-[description:"Configure taskwarrior" entry:"1558535952" modified:"1558537790" priority:"L" project:"Tools.Taskwarrior" status:"pending" tags:"tracking,tools" uuid:"287275c8-d17e-4428-8222-e02f0e0c147f"]
-[depends:"287275c8-d17e-4428-8222-e02f0e0c147f" description:"Add JIRA integration" entry:"1558536922" modified:"1558538046" project:"Tools.Taskwarrior" status:"pending" tags:"tools,tracking" uuid:"a2c36b75-a09b-4eff-a73e-34262248794c"]
-[depends:"287275c8-d17e-4428-8222-e02f0e0c147f" description:"Add autocomplete" entry:"1558537506" modified:"1558538050" project:"Tools.Taskwarrior" status:"pending" tags:"tracking,tools" uuid:"431ee74c-d5cc-4301-88b5-950bc8311b18"]
-[depends:"287275c8-d17e-4428-8222-e02f0e0c147f" description:"Sync tasks" entry:"1558537539" modified:"1558538053" project:"Tools.Taskwarrior" status:"pending" tags:"tracking,tools" uuid:"103fcdbf-f74b-4932-abc6-e08c01c14b35"]
-[depends:"287275c8-d17e-4428-8222-e02f0e0c147f" description:"Add configuration to dotfiles" entry:"1558537555" modified:"1558538056" project:"Tools.Taskwarrior" status:"pending" tags:"tracking,tools" uuid:"40ee1967-d3bb-4303-a2e5-0373d0cfd09e"]
-[description:"Test SQLAlchemy Continuum" entry:"1558603301" modified:"1559118351" priority:"M" project:"NDMS" status:"pending" tags:"history" uuid:"f25743a8-a97f-4b1c-9c88-daf58aa24a2e"]
-[description:"Refine observation ordering" entry:"1559118020" modified:"1559118020" project:"NDMS" status:"pending" tags:"observation,zone" uuid:"a9671de0-26f3-4e01-90a7-cbb8fbd460ff"]
-[description:"Refine clinician API" entry:"1559118300" modified:"1559118300" project:"NDMS" status:"pending" tags:"fhir,zone,clinician" uuid:"b7334f8f-429b-4aa7-89e6-c95df4fce6f4"]
