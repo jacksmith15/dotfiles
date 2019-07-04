@@ -1,0 +1,56 @@
+# ~/.tmuxinator/screen.yml
+
+name: ed-ngis
+root: ~/
+
+# Optional tmux socket
+# socket_name: foo
+
+# Runs before everything. Use it to start daemons etc.
+# pre:
+#   - cd projects/something.git && vagrant up
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+# tmux_options: -f ~/.tmux.mac.conf
+
+# Change the command to call tmux.  This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+# startup_window: logs
+
+# Controls whether the tmux session should be attached to automatically. Defaults to true.
+# attach: false
+
+# Runs after everything. Use it to attach to tmux with custom options etc.
+# post: tmux -CC attach -t screen
+
+windows:
+  - record:
+      root: ~/repo/ed-genomic-record-ms
+      layout: even-vertical
+      panes:
+        - workon record
+        - workon record
+        - workon record && watch docker-compose ps 
+  - integ:
+      root: ~/repo/ed-integration-tests
+      layout: even-vertical
+      panes:
+        - export $(cat .env.latest.build | xargs) && workon integ
+        - export $(cat .env.local | xargs) && workon integ
+  - config:
+      root: ~/repo/ed-config-ms
+      layout: even-vertical
+      panes:
+        - workon config
+        - workon config
+        - workon config && watch docker-compose ps 
+  - htop:
+      layout: even-vertical
+      panes:
+        - htop
+        - cd repo/dotfiles

@@ -27,6 +27,7 @@ dotfiles=(
     vim
     vimrc
     zsh/completions
+    zshenv
     zshrc
 )
 dotfiles_config=(
