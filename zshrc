@@ -97,7 +97,7 @@ bindkey '^[f' kill-word
 
 ################################################################################
 # Python
-PYTHON_VERSION=3.6.5
+PYTHON_VERSION=3.6.7
 
 ## Virtualenv
 if python -c "import virtualenvwrapper";
@@ -373,6 +373,14 @@ function grbbg {
 function tgit {
   local here=`git symbolic-ref HEAD | sed -e 's,refs/heads/[a-z]*/\(.*\),\1,'`
   t in "$here"
+}
+
+function git-cloc {
+  local repo="$1"
+  git clone --depth 1 "$repo" temp-linecount-repo &&
+    printf "('temp-linecount-repo' will be deleted automatically)\n\n\n" &&
+    cloc temp-linecount-repo &&
+    rm -rf temp-linecount-repo
 }
 
 ### JIRA ticket open
