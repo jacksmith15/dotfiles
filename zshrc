@@ -102,6 +102,8 @@ PYTHON_VERSION=3.6.7
 ## Virtualenv
 if python -c "import virtualenvwrapper";
 then
+  true
+else
     pip install virtualenvwrapper &> /dev/null
 fi
 export WORKON_HOME=$HOME/venvs
@@ -125,18 +127,24 @@ fi
 ## Pipenv
 if python -c "import pipenv"
 then
+  true
+else
     pip install pipenv &> /dev/null
 fi
 
 ## The Fuck
 if python -c "import thefuck";
 then
+  true
+else
     pip3 install thefuck &> /dev/null
 fi
 
 ## MyPy
 if python -c "import mypy";
 then
+  true
+else
     pip install mypy &>/dev/null
 fi
 # export MYPY_CONF=~/.config/mypy
