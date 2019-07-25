@@ -395,9 +395,6 @@ function ticket {
   xdg-open "$JIRA_URL/browse/$code"
 }
 
-### JIRA ticket from branch
-function
-
 ### Tmux CI
 function localci {
   local type_check="bash test.sh -ni -t"
