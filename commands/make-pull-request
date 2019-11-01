@@ -20,16 +20,13 @@ exit_msg () {
     exit "$1"
 }
 
-FEATURE_CHECKS=$(sed -e '/# Feature checklist/,/# Release checklist/!d' .github/pull_request_template.md | grep -v '# Release checklist')
-
-RELEASE_CHECKS=$(sed -e '/# Release checklist/,/\$/!d' .github/pull_request_template.md)
+checks=$(sed -e '/# Check list/,/\$/!d' .github/pull_request_template.md)
 
 # Default to master target
 target_branch=master
 
 while [[ "$#" > 0 ]]; do
     case $1 in
-        -r|--release) release=true;;
         -t|--target-branch) target_branch="$2"; shift;;
         -n|--dry-run) dry_run=true;;
         -nf|--no-fetch) no_fetch=true;;
@@ -43,7 +40,6 @@ if [[ -n ${show_help+x} ]]; then
     echo "Tool for opening Pull Requests."
     echo "Run as:\n $0 [options] TITLE\n\nPossible options are:"
     echo "  -h, --help: Displays this help."
-    echo "  -r, --release: Mark as a release PR."
     echo "  -t, --target-branch: Branch to target for pull request (default: master)."
     echo "  -n, --dry-run: Output to stdout instead of calling Github."
     echo "  -nf, --no-fetch: Don't fetech the target branch before generating from diff."
@@ -59,12 +55,6 @@ if [ -z "$no_fetch" ]; then
     git fetch origin "$target_branch"
 fi
 
-# Release or Feature Checklists
-if [ -z "$release" ]; then
-    checks="$FEATURE_CHECKS"
-else
-    checks="$RELEASE_CHECKS"
-fi
 
 # JIRA Ticket URL (if any).
 jira_url=$(jira_url)
