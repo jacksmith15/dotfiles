@@ -59,4 +59,4 @@ windows:
       layout: even-vertical
       panes:
         - ls
-        - DOCKER_COMPOSE_FILE=dev-env-project/docker-compose.yml watch docker-compose ps
+        - watch docker-compose -file dev-env-project/docker-compose.yml ps
