@@ -54,3 +54,9 @@ windows:
       panes:
         - htop
         - cd repo/dotfiles
+  - compose:
+      root: ~/repo/gel-compose
+      layout: even-vertical
+      panes:
+        - ls
+        - DOCKER_COMPOSE_FILE=dev-env-project/docker-compose.yml watch docker-compose ps
