@@ -359,7 +359,7 @@ function mkproj {
 
 ### List sublime projects
 function lsproj {
-  find $SUBLIME_PROJECT_DIR -name "*.sublime-project" -exec basename {} .sublime-project \; 
+  find $SUBLIME_PROJECT_DIR -name "*.sublime-project" -exec basename {} .sublime-project \;
 }
 
 ## Git commands:
@@ -437,7 +437,7 @@ fi
 
 # Start the tmux session.
 if command -v tmux>/dev/null; then
-  [[ ! $TERM =~ screen ]] && [ -z "$TMUX" ] && exec tmux
+  [[ ! $TERM =~ screen ]] && [[ -z "$TMUX" ]] && exec tmux
 fi
 
 eval "$(thefuck --alias)"
