@@ -40,6 +40,7 @@ windows:
       layout: even-vertical
       panes:
         - workon refdict
+        - workon refdict
   - htop:
       layout: even-vertical
       panes:
