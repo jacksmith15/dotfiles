@@ -41,6 +41,12 @@ windows:
       panes:
         - workon refdict
         - workon refdict
+  - template:
+      root: ~/repo/python-lib-template
+      layout: even-vertical
+      panes:
+        - workon template
+        - workon template
   - htop:
       layout: even-vertical
       panes:
