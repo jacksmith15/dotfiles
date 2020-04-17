@@ -97,7 +97,7 @@ bindkey '^[f' kill-word
 
 ################################################################################
 # Python
-PYTHON_VERSION=3.6.7
+PYTHON_VERSION=3.6.10
 
 ## Virtualenv
 if python -c "import virtualenvwrapper";
@@ -122,14 +122,6 @@ export PYENV_VERSION="$PYTHON_VERSION"
 if command -v pyenv 1>/dev/null 2>&1
 then
   eval "$(pyenv init -)"
-fi
-
-## Pipenv
-if python -c "import pipenv"
-then
-  true
-else
-    pip install pipenv &> /dev/null
 fi
 
 ## The Fuck
@@ -441,4 +433,3 @@ if command -v tmux>/dev/null; then
 fi
 
 eval "$(thefuck --alias)"
-eval "$(direnv hook zsh)"
