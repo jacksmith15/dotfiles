@@ -108,7 +108,7 @@ else
 fi
 export WORKON_HOME=$HOME/venvs
 export PROJECT_HOME=$HOME/repo
-source /usr/local/bin/virtualenvwrapper.sh
+source /home/jack/.pyenv/versions/3.6.10/bin/virtualenvwrapper.sh
 
 ## Pyenv
 if [ ! -d "$HOME/.pyenv" ]; then
