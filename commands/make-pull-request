@@ -62,6 +62,7 @@ jira_url=$(jira_url)
 
 # Construct the PR message.
 read -d '' changes << EOF
+
 # What has changed
 
 $(git diff $target_branch CHANGELOG.md | grep '^+\*' | sed 's/^+//g')
