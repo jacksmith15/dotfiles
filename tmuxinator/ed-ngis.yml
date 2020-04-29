@@ -35,20 +35,20 @@ windows:
       panes:
         - workon record
         - workon record
-        - workon record && watch docker-compose ps 
+        - workon record && task project:N +record
   - integ:
       root: ~/repo/ed-integration-tests
       layout: even-vertical
       panes:
-        - export $(cat .env.latest.build | xargs) && workon integ
-        - export $(cat .env.local | xargs) && workon integ
+        - export $(cat .env.local-compose | xargs) && workon integ
+        - export $(cat .env.local-compose | xargs) && workon integ
   - config:
       root: ~/repo/ed-config-ms
       layout: even-vertical
       panes:
         - workon config
         - workon config
-        - workon config && watch docker-compose ps 
+        - workon config && task project:N +config
   - htop:
       layout: even-vertical
       panes:
@@ -59,4 +59,4 @@ windows:
       layout: even-vertical
       panes:
         - ls
-        - watch docker-compose -file dev-env-project/docker-compose.yml ps
+        - docker ps
