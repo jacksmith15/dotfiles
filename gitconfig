@@ -12,7 +12,7 @@
 	default = simple
 [user]
 	name = Jack Smith
-	email = jack.smith@elucidata.co.uk
+	email = jack.je.smith@gmail.com
 [core]
 	excludesfile = $HOME/.gitignore_global
 	editor = vim

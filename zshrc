@@ -97,7 +97,7 @@ bindkey '^[f' kill-word
 
 ################################################################################
 # Python
-PYTHON_VERSION=3.6.10
+PYTHON_VERSION=3.8.5
 
 ## Virtualenv
 if python -c "import virtualenvwrapper";

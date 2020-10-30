@@ -66,7 +66,7 @@ requirements() {
 
     ## Less highlighting
     echo -e "$magenta""\n Installing less highlighting dependencies...\n""$white"
-    sudo apt-get install -y libsource-highlight-common | grep "to upgrade"
+    sudo apt-get install -y libsource-highlight-common source-highlight | grep "to upgrade"
 
     ## Pyenv
     echo -e "$magenta""\n Installing pyenv dependencies...\n""$white"
