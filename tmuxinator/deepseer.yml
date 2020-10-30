@@ -31,10 +31,12 @@ root: ~/
 windows:
   - platform:
       root: ~/repo/deepseer_platform
-      layout: even-vertical
+      layout: tiled
       panes:
-        - workon deep
-        - workon deep && task project:D +platform
+        - workon deep && export $(cat .env.secrets | xargs) && export $(cat tests/integration/.env.docker)
+        - workon deep && export $(cat .env.secrets | xargs) && export $(cat tests/integration/.env.docker)
+        - workon deep && export $(cat .env.secrets | xargs) && export $(cat tests/integration/.env.docker)
+        - workon deep && export $(cat .env.secrets | xargs) && export $(cat tests/integration/.env.docker)
   - ui:
       root: ~/repo/deepseer_ui
       layout: even-vertical

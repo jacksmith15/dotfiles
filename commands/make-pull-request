@@ -11,7 +11,7 @@ jira_url () {
     if [[ "$ticket" -eq "" ]]; then
         echo "$ticket"
     else
-        echo "[JIRA Ticket](https://jira.extge.co.uk/browse/$ticket)"
+        echo "[JIRA Ticket](https://unai.atlassian.net/browse/$ticket)"
     fi
 }
 
