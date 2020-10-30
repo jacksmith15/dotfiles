@@ -1,6 +1,6 @@
 # ~/.tmuxinator/screen.yml
 
-name: p-schema
+name: statham
 root: ~/
 
 # Optional tmux socket

@@ -1,6 +1,6 @@
 # ~/.tmuxinator/screen.yml
 
-name: ed-ngis
+name: ckpd
 root: ~/
 
 # Optional tmux socket
@@ -29,34 +29,20 @@ root: ~/
 # post: tmux -CC attach -t screen
 
 windows:
-  - record:
-      root: ~/repo/ed-genomic-record-ms
+  - ingestion:
+      root: ~/repo/global-search-ingestion
       layout: even-vertical
       panes:
-        - workon record
-        - workon record
-        - workon record && task project:N +record
-  - integ:
-      root: ~/repo/ed-integration-tests
+        - gst
+        - watch docker-compose ps
+  - refdict:
+      root: ~/repo/global-search-aux
       layout: even-vertical
       panes:
-        - export $(cat .env.local-compose | xargs) && workon integ
-        - export $(cat .env.local-compose | xargs) && workon integ
-  - config:
-      root: ~/repo/ed-config-ms
-      layout: even-vertical
-      panes:
-        - workon config
-        - workon config
-        - workon config && task project:N +config
+        - gst
+        - watch docker-compose ps
   - htop:
       layout: even-vertical
       panes:
         - htop
         - cd repo/dotfiles
-  - compose:
-      root: ~/repo/gel-compose
-      layout: even-vertical
-      panes:
-        - ls
-        - docker ps
