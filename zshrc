@@ -2,8 +2,8 @@
 # ENV and ZSH set-up..
 
 ## Path and Locale.
-export GOPATH=/home/jack/go
-export PATH=$HOME/bin:/usr/local/bin:$PATH:$GOPATH/bin
+export GOPATH=/usr/local/go
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH:$GOPATH/bin
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
 
@@ -25,9 +25,6 @@ export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## Uncomment the following line to enable command auto-correction.
 ## ENABLE_CORRECTION="true"
-
-## Formatting for output of `history` command.
-HIST_STAMPS="yyyy-mm-dd"
 
 ## zsh plugins to use
 plugins=(
@@ -93,7 +90,6 @@ bindkey '^W' backward-word
 bindkey '^F' forward-word
 bindkey '^[w' backward-kill-word
 bindkey '^[f' kill-word
-
 
 ################################################################################
 # Python
@@ -184,6 +180,7 @@ if command -v nvm >/dev/null 2>&1; then
 fi
 
 
+################################################################################
 # Less
 
 ## Custom less syntax highlighting
@@ -397,37 +394,28 @@ function ticket {
   xdg-open "$JIRA_URL/browse/$code"
 }
 
-### Tmux CI
-function localci {
-  local type_check="bash test.sh -ni -t"
-  local lint="bash test.sh -ni -p"
-  local unit="bash test.sh -ni -u"
-  local component="bash test.sh -ni -ct"
-  local integration="make integration"
-  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$type_check' --wait"
-  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$lint' --wait"
-  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$unit' --wait"
-  tmux select-layout tiled
-  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$component' --wait"
-  tmux split-window -v "watchmedo shell-command  --patterns=\"*.py\"  --recursive  --command='$integration' --wait"
-  tmux select-layout tiled
-  htop
-}
 
 ################################################################################
 # Final tasks.
 
-# If ENV is set, and a .env file exists, source that .env file.
-if [ -f "$HOME"/."$ENV".env ]
-then
-  source "$HOME"/."$ENV".env
-fi
+## History configuration
+export HIST_STAMPS="yyyy-mm-dd"
 
-# If local overrides exist, source those last
-if [ -f "$HOME"/.local.env ]
-then
-  source "$HOME"/.local.env
-fi
+### Set file and size
+export HISTFILE=~/.zsh_history
+export HISTFILESIZE=1000000000
+export HISTSIZE=1000000000
+
+### Share history between shells
+setopt SHARE_HISTORY
+
+### Save exact timestamps
+export HISTTIMEFORMAT="[%F %T] "
+setopt EXTENDED_HISTORY
+
+### Don't show duplicates when searching
+setopt HIST_FIND_NO_DUPS
+
 
 # Start the tmux session.
 if command -v tmux>/dev/null; then

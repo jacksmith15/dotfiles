@@ -43,3 +43,5 @@ else
     echo "Warning: dircolors not found"
 fi
 
+# Cookpad
+alias gaws='envchain aws aws --profile=cookpad-global-1'
