@@ -2,7 +2,7 @@
 # ENV and ZSH set-up..
 
 ## Path and Locale.
-export GOPATH=/usr/local/go
+export GOPATH=$HOME/scraps/go
 export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH:$GOPATH/bin
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
@@ -75,6 +75,9 @@ export SUBLIME_PROJECT_DIR="$HOME"/proj
 
 ## jira url
 export JIRA_URL="https://jira.extge.co.uk"
+
+## Tfenv
+export PATH="$HOME/.tfenv/bin:$PATH"
 
 ## secret variables
 source ~/.zsh_secrets
@@ -206,6 +209,14 @@ function load-env {
 ### Backup a file - maybe make this do folders?
 bk() {
   cp -a "$1" "${1}_$(date --iso-8601=seconds).bk"
+}
+
+### Extract a field from a table
+## $1 the field number
+## $2 the data
+## Example: ps aux | grep ssh | field 1
+function field {
+  tr -s ' ' ' ' $2 | cut -f $1 -d ' '
 }
 
 ### Search on google.
