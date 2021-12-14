@@ -3,7 +3,7 @@
 
 ## Path and Locale.
 export GOPATH=$HOME/scraps/go
-export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH:$GOPATH/bin
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/go/bin:$PATH:$GOPATH/bin
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
 
@@ -28,13 +28,16 @@ export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## zsh plugins to use
 plugins=(
+  aws
   django
   docker
   docker-compose
   extract
   git
   jira
+  kubectl
   pip
+  poetry
   python
   sublime
   taskwarrior
@@ -54,6 +57,10 @@ fpath=(/var/lib/gems/2.5.0/gems/timetrap-1.15.1/completions/zsh $HOME/.zsh/compl
 
 ################################################################################
 # User configuration
+
+# Don't append % to the end of output:
+# https://unix.stackexchange.com/questions/167582/why-zsh-ends-a-line-with-a-highlighted-percent-symbol
+unsetopt prompt_cr prompt_sp
 
 ## Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -98,17 +105,6 @@ bindkey '^[f' kill-word
 # Python
 PYTHON_VERSION=3.8.6
 
-## Virtualenv
-if python -c "import virtualenvwrapper";
-then
-  true
-else
-    pip install virtualenvwrapper &> /dev/null
-fi
-export WORKON_HOME=$HOME/venvs
-export PROJECT_HOME=$HOME/repo
-source /home/jack/.pyenv/versions/"$PYTHON_VERSION"/bin/virtualenvwrapper.sh
-
 ## Pyenv
 if [ ! -d "$HOME/.pyenv" ]; then
   echo "cloning pyenv..."
@@ -121,7 +117,26 @@ export PYENV_VERSION="$PYTHON_VERSION"
 if command -v pyenv 1>/dev/null 2>&1
 then
   eval "$(pyenv init -)"
+  eval "$(pyenv init --path)"
 fi
+
+## Virtualenv
+if python -c "import virtualenvwrapper";
+then
+  true
+else
+    pip install virtualenvwrapper &> /dev/null
+fi
+export WORKON_HOME=$HOME/venvs
+export PROJECT_HOME=$HOME/repo
+source /home/jack/.pyenv/versions/"$PYTHON_VERSION"/bin/virtualenvwrapper.sh
+
+
+
+## Poetry
+export POETRY_HOME="$HOME/.poetry"
+export PATH="$POETRY_HOME/bin:$PATH"
+
 
 ## The Fuck
 if python -c "import thefuck";
@@ -150,8 +165,9 @@ fi
 ################################################################################
 # Node
 ## Node version manager options
-if command -v nvm >/dev/null 2>&1; then
-  export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="$HOME/.nvm"
+
+if [ -s "$NVM_DIR/nvm.sh" ]; then
 
   ### This loads nvm
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -160,26 +176,26 @@ if command -v nvm >/dev/null 2>&1; then
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
   # Zsh hook - commented as quite slow
-  autoload -U add-zsh-hook
-  load-nvmrc() {
-    local node_version="$(nvm version)"
-    local nvmrc_path="$(nvm_find_nvmrc)"
+  # autoload -U add-zsh-hook
+  # load-nvmrc() {
+  #   local node_version="$(nvm version)"
+  #   local nvmrc_path="$(nvm_find_nvmrc)"
 
-    if [ -n "$nvmrc_path" ]; then
-      local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+  #   if [ -n "$nvmrc_path" ]; then
+  #     local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
 
-      if [ "$nvmrc_node_version" = "N/A" ]; then
-        nvm install
-      elif [ "$nvmrc_node_version" != "$node_version" ]; then
-        nvm use
-      fi
-    elif [ "$node_version" != "$(nvm version default)" ]; then
-      echo "Reverting to nvm default version"
-      nvm use default
-    fi
-  }
-  add-zsh-hook chpwd load-nvmrc
-  load-nvmrc
+  #     if [ "$nvmrc_node_version" = "N/A" ]; then
+  #       nvm install
+  #     elif [ "$nvmrc_node_version" != "$node_version" ]; then
+  #       nvm use
+  #     fi
+  #   elif [ "$node_version" != "$(nvm version default)" ]; then
+  #     echo "Reverting to nvm default version"
+  #     nvm use default
+  #   fi
+  # }
+  # add-zsh-hook chpwd load-nvmrc
+  # load-nvmrc
 fi
 
 
@@ -217,6 +233,16 @@ bk() {
 ## Example: ps aux | grep ssh | field 1
 function field {
   tr -s ' ' ' ' $2 | cut -f $1 -d ' '
+}
+
+### Highlight matches
+## $1 the pattern to match
+## $2 the content to search
+## Example: cat README.md | highlight author
+function highlight {
+  local pattern="$1""\|$"
+  local content="$2"
+  grep --color $pattern $content
 }
 
 ### Search on google.
@@ -293,40 +319,6 @@ function clip {
   xclip -selection clipboard "$1"
 }
 
-# Open remote file with sublime.
-### Installs rmate on the remote to allow this.
-## $1 - server_user@server_address
-## $2 - path/to/file
-function rsubl {
-  local remote=$1
-  local file_path=$2
-  local rsub_path="/usr/local/bin/rsub"
-  ssh -R 52698:localhost:52698 "$remote" "
-    if ! [ -f $rsub_path ]; then
-      wget -O $rsub_path \https://raw.github.com/aurora/rmate/master/rmate
-      chmod a+x $rsub_path
-    fi
-    rsub $file_path
-  "
-}
-
-### Open a file on a vagrant remote with sublime.
-function vsubl {
-  local remote=$1
-  local file_path=$2
-  local rsub_path="/usr/local/bin/rsub"
-  ssh -q \
-      -o StrictHostKeyChecking=no \
-      -o UserKnownHostsFile=/dev/null \
-      -i ~/.vagrant.d/insecure_private_key \
-      -R 52698:localhost:52698 "$remote" "
-    if ! [ -f $rsub_path ]; then
-      sudo wget -O $rsub_path \https://raw.github.com/aurora/rmate/master/rmate
-      sudo chmod a+x $rsub_path
-    fi
-    rsub $file_path
-  "
-}
 
 ## Python source code
 ### Clean a sub tree
@@ -434,3 +426,5 @@ if command -v tmux>/dev/null; then
 fi
 
 eval "$(thefuck --alias)"
+
+export PATH="$HOME/.poetry/bin:$PATH"

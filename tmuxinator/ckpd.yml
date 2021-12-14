@@ -29,35 +29,35 @@ root: ~/
 # post: tmux -CC attach -t screen
 
 windows:
-  - ingestion:
-      root: ~/repo/global-search-ingestion
-      layout: even-vertical
-      panes:
-        - gst
-        - gst
-        - gst
-  - aux:
-      root: ~/repo/global-search-aux
-      layout: even-vertical
-      panes:
-        - gst
-        - gst
-        - gst
-  - htop:
-      layout: even-vertical
-      panes:
-        - htop
-        - cd repo/dotfiles
-  - search:
-      root: ~/repo/global-search-v2
-      layout: even-vertical
-      panes:
-        - gst
-        - gst
-  - k8s:
-      root: ~/repo/k8s-apps
-      layout: even-vertical
-      panes:
-        - gst
-        - gst
-        - gst
+- k8s:
+    root: ~/repo/global-search-k8s-apps
+    layout: even-vertical
+    panes:
+      - gst
+      - cd ~/repo/k8s-apps
+      - cd ~/repo/global-aws
+- svc:
+    root: ~/repo/global-search-ingestion
+    layout: even-vertical
+    panes:
+      - gst
+      - cd ~/repo/global-search-aux
+      - cd ~/repo/global-search-v2
+- htop:
+    layout: even-vertical
+    panes:
+      - htop
+      - cd repo/dotfiles
+- helpers:
+    root: ~/repo/helpers
+    layout: even-vertical
+    panes:
+      - gst
+      - gst
+- extra:
+    root: ~/repo
+    layout: even-vertical
+    panes:
+      - ls
+      - ls
+      - ls
