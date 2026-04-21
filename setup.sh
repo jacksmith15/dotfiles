@@ -87,19 +87,19 @@ requirements() {
     base-16-shell
 
     # MyPy Stubs
-    mypy-stubs
+    # mypy-stubs
 
     # Gnome extensions
     gnome-extensions
 
     # Wiki
-    wiki
+    # wiki
 
     # Dropbox
     dropbox
 
     # Taskwarrior
-    taskwarrior
+    # taskwarrior
 }
 
 oh-my-zsh() {

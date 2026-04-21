@@ -17,12 +17,14 @@ alias glggo="git log --all --decorate --oneline --graph"
 alias reftime="git reflog --date=iso --oneline"
 alias dateline='log --pretty=format:"%C(yellow)%h %Cblue%>(12)%ad %Cgreen%<(7)%aN%Cred%d %Creset%s"'
 alias gs=gst
+alias gwl='git worktree list'
 
 # Python
 alias mkvirtualenv3="mkvirtualenv --python=/usr/bin/python3"
 alias ipy=python
 
 # Docker
+alias docker-compose="docker compose"
 alias dcom=docker-compose
 alias dcom-rebuild="dcom stop;dcom build;dcom up -d"
 alias dcl="docker-compose logs"

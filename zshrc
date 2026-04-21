@@ -28,8 +28,8 @@ export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## zsh plugins to use
 plugins=(
-  aws
-  django
+  # aws
+  # django
   docker
   docker-compose
   extract
@@ -40,7 +40,7 @@ plugins=(
   poetry
   python
   sublime
-  taskwarrior
+  # taskwarrior
   thefuck
   urltools
   zsh-autosuggestions
@@ -81,7 +81,7 @@ export SUBLIME_CONFIG="$HOME"/.config/sublime-text-3/Packages/User
 export SUBLIME_PROJECT_DIR="$HOME"/proj
 
 ## jira url
-export JIRA_URL="https://jira.extge.co.uk"
+export JIRA_URL="https://wavetrak.atlassian.net/"
 
 ## Tfenv
 export PATH="$HOME/.tfenv/bin:$PATH"
@@ -103,7 +103,10 @@ bindkey '^[f' kill-word
 
 ################################################################################
 # Python
-PYTHON_VERSION=3.8.6
+PYTHON_VERSION=3.10.12
+
+# Disable __pycache__ folders
+export PYTHONDONTWRITEBYTECODE=1
 
 ## Pyenv
 if [ ! -d "$HOME/.pyenv" ]; then
@@ -160,6 +163,21 @@ fi
 #   export MYPYPATH=$MYPYPATH:$stub/$inner_directory
 # done
 
+## Rye
+if [ -f "${HOME}/.rye/env" ]
+then
+  source "$HOME/.rye/env"
+fi
+
+################################################################################
+# Rust
+
+# Add to path
+if [ -f "${HOME}/.cargo/env" ]
+then
+  . "${HOME}/.cargo/env"
+fi
+
 
 
 ################################################################################
@@ -211,6 +229,11 @@ if dpkg -s libsource-highlight-common>/dev/null && \
 else
     echo "Make sure source-highlight is installed for less highlighting."
 fi
+
+
+################################################################################
+# AWS
+export AWS_SDK_LOAD_CONFIG=true
 
 
 ################################################################################
@@ -319,6 +342,11 @@ function clip {
   xclip -selection clipboard "$1"
 }
 
+# Plot memory usage for a process
+function memoryplot {
+  while :; do grep -oP '^VmRSS:\s+\K\d+' /proc/${1}/status \
+    | numfmt --from-unit Ki --to-unit Mi; sleep 1; done | ttyplot -u Mi
+}
 
 ## Python source code
 ### Clean a sub tree
@@ -397,6 +425,121 @@ function ticket {
   xdg-open "$JIRA_URL/browse/$code"
 }
 
+### Switch between git worktrees
+# gws() {
+#   local branch="$1"
+#   local repo_root repo_name worktree_path
+
+#   repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+#   if [[ $? -ne 0 ]]; then
+#     echo "gws: not inside a git repository"
+#     return 1
+#   fi
+#   repo_root="${repo_root%/.git}"
+
+#   if [[ -z "$branch" ]]; then
+#     cd "$repo_root"
+#     return 0
+#   fi
+
+#   repo_name=$(basename "$repo_root")
+#   worktree_path="${HOME}/worktrees/${repo_name}/${branch}"
+
+#   if [[ ! -d "$worktree_path" ]]; then
+#     echo "gws: creating worktree for '$branch' at '$worktree_path'"
+#     if git rev-parse --verify "$branch" &>/dev/null; then
+#       # Branch exists, just create a worktree for it
+#       git worktree add "$worktree_path" "$branch" || return 1
+#     else
+#       # Branch doesn't exist, create it
+#       git worktree add -b "$branch" "$worktree_path" || return 1
+#     fi
+#   fi
+
+#   cd "$worktree_path"
+# }
+
+gws() {
+  local branch="$1"
+  local repo_root repo_name worktree_path relative_path current
+
+  repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+  if [[ $? -ne 0 ]]; then
+    echo "gws: not inside a git repository"
+    return 1
+  fi
+  repo_root="${repo_root%/.git}"
+
+  if [[ -z "$branch" ]]; then
+    cd "$repo_root"
+    return 0
+  fi
+
+  # Walk up from repo_root looking for a 'repo' ancestor directory
+  relative_path=$(basename "$repo_root")
+  current=$(dirname "$repo_root")
+  while [[ "$current" != "/" && "$current" != "$HOME" ]]; do
+    if [[ $(basename "$current") == "repo" ]]; then
+      # Found it — relative_path now contains <namespace>/<repo>
+      break
+    fi
+    relative_path="$(basename "$current")/${relative_path}"
+    current=$(dirname "$current")
+  done
+
+  worktree_path="${HOME}/worktrees/${relative_path}/${branch}"
+
+  if [[ ! -d "$worktree_path" ]]; then
+    echo "gws: creating worktree for '$branch' at '$worktree_path'"
+    if git rev-parse --verify "$branch" &>/dev/null; then
+      git worktree add "$worktree_path" "$branch" || return 1
+    else
+      git worktree add -b "$branch" "$worktree_path" || return 1
+    fi
+  fi
+
+  cd "$worktree_path"
+}
+alias gwo="gws"
+
+### Delete a worktree and associated local branch
+gwd() {
+  local branch="$1"
+  local repo_root
+
+  repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+  if [[ $? -ne 0 ]]; then
+    echo "gwd: not inside a git repository"
+    return 1
+  fi
+  repo_root="${repo_root%/.git}"
+
+  if [[ -z "$branch" ]]; then
+    echo "gwd: branch name required"
+    return 1
+  fi
+
+  # Remove worktree by branch name
+  git worktree remove "$branch" || {
+    echo "gwd: failed to remove worktree '$branch' — may have uncommitted changes, use 'git worktree remove --force $branch' manually if sure"
+    return 1
+  }
+
+  # Delete local branch if it exists
+  if git rev-parse --verify "$branch" &>/dev/null; then
+    git branch -D "$branch" || {
+      echo "gwd: failed to delete branch '$branch'"
+      return 1
+    }
+  fi
+
+  # If we were inside the worktree being deleted, go back to repo root
+  if [[ "$PWD" == "$(git worktree list --porcelain 2>/dev/null | awk '/^worktree /{print $2}' | grep -v "^$repo_root$" | head -1)"* ]]; then
+    cd "$repo_root"
+  fi
+}
+
+
 
 ################################################################################
 # Final tasks.
@@ -421,10 +564,52 @@ setopt HIST_FIND_NO_DUPS
 
 
 # Start the tmux session.
+export COLORTERM=truecolor
 if command -v tmux>/dev/null; then
-  [[ ! $TERM =~ screen ]] && [[ -z "$TMUX" ]] && exec tmux
+  [[ ! "${TERM}" =~ screen ]] && [[ -z "${TERM_PROGRAM}" || "${TERM_PROGRAM}" != "vscode" ]] && [[ -z "$TMUX" ]] && exec tmux
 fi
 
 eval "$(thefuck --alias)"
 
 export PATH="$HOME/.poetry/bin:$PATH"
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/jack/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/jack/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/jack/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/jack/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+# >>> mamba initialize >>>
+# !! Contents within this block are managed by 'mamba init' !!
+export MAMBA_EXE="/home/jack/.local/bin/micromamba";
+export MAMBA_ROOT_PREFIX="/home/jack/micromamba";
+__mamba_setup="$("$MAMBA_EXE" shell hook --shell zsh --prefix "$MAMBA_ROOT_PREFIX" 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__mamba_setup"
+else
+    if [ -f "/home/jack/micromamba/etc/profile.d/micromamba.sh" ]; then
+        . "/home/jack/micromamba/etc/profile.d/micromamba.sh"
+    else
+        export  PATH="/home/jack/micromamba/bin:$PATH"  # extra space after export prevents interference from conda init
+    fi
+fi
+unset __mamba_setup
+# <<< mamba initialize <<<
+alias mamba=micromamba
+
+# pnpm
+export PNPM_HOME="/home/jack/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
