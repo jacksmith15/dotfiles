@@ -1,0 +1,15 @@
+#compdef gws
+
+_gws_branches() {
+  local -a worktree_branches all_branches other_branches
+
+  worktree_branches=($(git worktree list --porcelain | awk '/^branch / { sub("refs/heads/", "", $2); print $2 }'))
+  all_branches=($(git branch --format='%(refname:short)' 2>/dev/null))
+  other_branches=(${all_branches:|worktree_branches})
+
+  local -a ordered
+  ordered=($worktree_branches $other_branches)
+  compadd -V branches -a ordered
+}
+
+_gws_branches

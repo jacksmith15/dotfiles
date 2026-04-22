@@ -46,10 +46,10 @@ plugins=(
   zsh-autosuggestions
 )
 
-source "$ZSH/oh-my-zsh.sh"
-
-## Add timetrap completions
+## Add custom and timetrap completions (must be before compinit in oh-my-zsh)
 fpath=(/var/lib/gems/2.5.0/gems/timetrap-1.15.1/completions/zsh $HOME/.zsh/completions $fpath)
+
+source "$ZSH/oh-my-zsh.sh"
 
 ## Base16 Shell.
 [ -n "$PS1" ] && [ -s "$BASE16_SHELL/profile_helper.sh" ] && eval "$("$BASE16_SHELL/profile_helper.sh")"
@@ -461,7 +461,7 @@ function ticket {
 
 gws() {
   local branch="$1"
-  local repo_root repo_name worktree_path relative_path current
+  local repo_root repo_name worktree_path relative_path current subdir
 
   repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
   if [[ $? -ne 0 ]]; then
@@ -470,8 +470,19 @@ gws() {
   fi
   repo_root="${repo_root%/.git}"
 
+  # Capture subdirectory relative to current worktree toplevel
+  local toplevel
+  toplevel=$(git rev-parse --show-toplevel 2>/dev/null)
+  if [[ -n "$toplevel" && "$PWD" != "$toplevel" ]]; then
+    subdir="${PWD#"$toplevel"/}"
+  fi
+
   if [[ -z "$branch" ]]; then
-    cd "$repo_root"
+    if [[ -n "$subdir" && -d "$repo_root/$subdir" ]]; then
+      cd "$repo_root/$subdir"
+    else
+      cd "$repo_root"
+    fi
     return 0
   fi
 
@@ -480,7 +491,6 @@ gws() {
   current=$(dirname "$repo_root")
   while [[ "$current" != "/" && "$current" != "$HOME" ]]; do
     if [[ $(basename "$current") == "repo" ]]; then
-      # Found it — relative_path now contains <namespace>/<repo>
       break
     fi
     relative_path="$(basename "$current")/${relative_path}"
@@ -493,12 +503,18 @@ gws() {
     echo "gws: creating worktree for '$branch' at '$worktree_path'"
     if git rev-parse --verify "$branch" &>/dev/null; then
       git worktree add "$worktree_path" "$branch" || return 1
+    elif git rev-parse --verify "origin/$branch" &>/dev/null; then
+      git worktree add -b "$branch" "$worktree_path" "origin/$branch" || return 1
     else
       git worktree add -b "$branch" "$worktree_path" || return 1
     fi
   fi
 
-  cd "$worktree_path"
+  if [[ -n "$subdir" && -d "$worktree_path/$subdir" ]]; then
+    cd "$worktree_path/$subdir"
+  else
+    cd "$worktree_path"
+  fi
 }
 alias gwo="gws"
 

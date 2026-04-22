@@ -1,0 +1,9 @@
+#compdef gwd
+
+_gwd_worktrees() {
+  local -a worktree_branches
+  worktree_branches=($(git worktree list --porcelain | awk '/^branch / { sub("refs/heads/", "", $2); print $2 }'))
+  compadd -V worktrees -a worktree_branches
+}
+
+_gwd_worktrees
