@@ -536,10 +536,7 @@ gwd() {
   fi
 
   # Remove worktree by branch name
-  git worktree remove "$branch" || {
-    echo "gwd: failed to remove worktree '$branch' — may have uncommitted changes, use 'git worktree remove --force $branch' manually if sure"
-    return 1
-  }
+  git worktree remove --force "$branch"
 
   # Delete local branch if it exists
   if git rev-parse --verify "$branch" &>/dev/null; then
@@ -554,7 +551,6 @@ gwd() {
     cd "$repo_root"
   fi
 }
-
 
 
 ################################################################################

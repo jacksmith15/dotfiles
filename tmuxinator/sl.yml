@@ -2,35 +2,18 @@ name: sl
 root: ~/
 
 windows:
-- services:
-    root: ~/repo/Surfline/wavetrak-services/services
-    layout: even-vertical
-    panes:
-    - gst
-    - gst
-    - gst
-- jobs:
-    root: ~/repo/Surfline/wavetrak-services/jobs
-    layout: even-vertical
-    panes:
-    - gst
-    - gst
-    - gst
-- charts:
+- svc:
     root: ~/repo/Surfline/wavetrak-services
-    layout: tiled
+    layout: even-vertical
     panes:
-    - cd packages/map-lib
-    - cd packages/map-lib
-    - cd pages/charts-playground
-    - cd pages/buoyweather
+    - gst
+    - agent resume
 - ios:
     root: ~/repo/Surfline/buoyweather-ios
     layout: even-vertical
     panes:
     - gst
-    - gst
-    - gst
+    - agent resume
 - htop:
     root: ~/
     layout: even-vertical
