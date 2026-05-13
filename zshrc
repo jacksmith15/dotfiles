@@ -459,19 +459,17 @@ function ticket {
 #   cd "$worktree_path"
 # }
 
-gws() {
+_gw_resolve() {
   local branch="$1"
-  local repo_root repo_name worktree_path relative_path current subdir
+  local repo_root repo_name worktree_path relative_path current subdir toplevel
 
   repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
   if [[ $? -ne 0 ]]; then
-    echo "gws: not inside a git repository"
+    echo "_gw_resolve: not inside a git repository" >&2
     return 1
   fi
   repo_root="${repo_root%/.git}"
 
-  # Capture subdirectory relative to current worktree toplevel
-  local toplevel
   toplevel=$(git rev-parse --show-toplevel 2>/dev/null)
   if [[ -n "$toplevel" && "$PWD" != "$toplevel" ]]; then
     subdir="${PWD#"$toplevel"/}"
@@ -479,14 +477,13 @@ gws() {
 
   if [[ -z "$branch" ]]; then
     if [[ -n "$subdir" && -d "$repo_root/$subdir" ]]; then
-      cd "$repo_root/$subdir"
+      echo "$repo_root/$subdir"
     else
-      cd "$repo_root"
+      echo "$repo_root"
     fi
     return 0
   fi
 
-  # Walk up from repo_root looking for a 'repo' ancestor directory
   relative_path=$(basename "$repo_root")
   current=$(dirname "$repo_root")
   while [[ "$current" != "/" && "$current" != "$HOME" ]]; do
@@ -500,7 +497,7 @@ gws() {
   worktree_path="${HOME}/worktrees/${relative_path}/${branch}"
 
   if [[ ! -d "$worktree_path" ]]; then
-    echo "gws: creating worktree for '$branch' at '$worktree_path'"
+    echo "creating worktree for '$branch' at '$worktree_path'" >&2
     if git rev-parse --verify "$branch" &>/dev/null; then
       git worktree add "$worktree_path" "$branch" || return 1
     elif git rev-parse --verify "origin/$branch" &>/dev/null; then
@@ -511,12 +508,45 @@ gws() {
   fi
 
   if [[ -n "$subdir" && -d "$worktree_path/$subdir" ]]; then
-    cd "$worktree_path/$subdir"
+    echo "$worktree_path/$subdir"
   else
-    cd "$worktree_path"
+    echo "$worktree_path"
   fi
 }
+
+gws() {
+  local target
+  target=$(_gw_resolve "$1") || return 1
+  cd "$target"
+}
 alias gwo="gws"
+
+gwx() {
+  local target branch="$1"
+  target=$(_gw_resolve "$branch") || return 1
+
+  local window_name
+  if [[ -n "$branch" ]]; then
+    local part
+    for part in ${(s:/:)branch}; do
+      case "$part" in
+        fix|feat|feature|chore|docs|style|refactor|perf|test|tests|build|ci|revert) continue ;;
+      esac
+      window_name="$part"
+      break
+    done
+    window_name="${window_name:-$branch}"
+  else
+    window_name=$(basename "$target")
+  fi
+
+  tmux new-window -n "$window_name" -c "$target"
+  tmux split-window -h -c "$target"
+  tmux split-window -h -c "$target"
+  tmux split-window -h -c "$target" "agent --continue || agent"
+  tmux select-layout even-vertical
+  tmux select-pane -t 0
+}
 
 ### Delete a worktree and associated local branch
 gwd() {
