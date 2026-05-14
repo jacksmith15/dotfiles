@@ -75,7 +75,7 @@ export ARCHFLAGS="-arch x86_64"
 ## ssh
 export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
 
-export SUBLIME_CONFIG="$HOME"/.config/sublime-text-3/Packages/User
+export SUBLIME_CONFIG="$HOME"/.config/sublime-text/Packages/User
 
 ## sublime project directory
 export SUBLIME_PROJECT_DIR="$HOME"/proj

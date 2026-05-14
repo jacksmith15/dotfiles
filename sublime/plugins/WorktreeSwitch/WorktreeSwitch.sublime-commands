@@ -1,0 +1,6 @@
+[
+    {
+        "caption": "Worktree: Switch",
+        "command": "worktree_switch"
+    }
+]

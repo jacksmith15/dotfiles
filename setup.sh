@@ -170,7 +170,7 @@ sublime-text-3() {
 
 sublime-text-3-config() {
     source=git@github.com:jacksmith15/SublimeUser.git
-    target="$HOME"/.config/sublime-text-3/Packages/User
+    target="$HOME"/.config/sublime-text/Packages/User
     if [ ! -d "$target" ]
     then
         echo -e $magenta"\n Cloning Sublime Text Config.. \n"$white

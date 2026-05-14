@@ -1,0 +1,16 @@
+[
+    {
+        "caption": "GitHub",
+        "children": [
+            { "caption": "Open", "command": "github_open", "args": { "mode": "current" } },
+            { "caption": "Open on default branch", "command": "github_open", "args": { "mode": "default_branch" } },
+            { "caption": "Open permalink", "command": "github_open", "args": { "mode": "permalink" } },
+            { "caption": "Open blame", "command": "github_open", "args": { "mode": "blame" } },
+            { "caption": "-" },
+            { "caption": "Copy URL", "command": "github_copy_url", "args": { "mode": "current" } },
+            { "caption": "Copy URL (default branch)", "command": "github_copy_url", "args": { "mode": "default_branch" } },
+            { "caption": "Copy permalink", "command": "github_copy_url", "args": { "mode": "permalink" } },
+            { "caption": "Copy blame URL", "command": "github_copy_url", "args": { "mode": "blame" } }
+        ]
+    }
+]
