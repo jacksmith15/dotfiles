@@ -49,6 +49,7 @@ plugins=(
 ## Add custom and timetrap completions (must be before compinit in oh-my-zsh)
 fpath=(/var/lib/gems/2.5.0/gems/timetrap-1.15.1/completions/zsh $HOME/.zsh/completions $fpath)
 
+[[ -n "$CURSOR_AGENT" ]] && ZSH_DISABLE_COMPFIX=true
 source "$ZSH/oh-my-zsh.sh"
 
 ## Base16 Shell.
@@ -104,6 +105,7 @@ bindkey '^[f' kill-word
 ################################################################################
 # Python
 PYTHON_VERSION=3.10.12
+export PYENV_VERSION="$PYTHON_VERSION"
 
 # Disable __pycache__ folders
 export PYTHONDONTWRITEBYTECODE=1
@@ -114,14 +116,15 @@ if [ ! -d "$HOME/.pyenv" ]; then
   git clone https://github.com/pyenv/pyenv.git "$HOME"/.pyenv
 fi
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-export PYENV_VERSION="$PYTHON_VERSION"
-if command -v pyenv 1>/dev/null 2>&1
-then
-  eval "$(pyenv init -)"
-  eval "$(pyenv init --path)"
-fi
+# The following is run by zshenv
+# export PYENV_ROOT="$HOME/.pyenv"
+# export PATH="$PYENV_ROOT/bin:$PATH"
+# export PYENV_VERSION="$PYTHON_VERSION"
+# if command -v pyenv 1>/dev/null 2>&1
+# then
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv init --path)"
+# fi
 
 ## Virtualenv
 if python -c "import virtualenvwrapper";
@@ -499,11 +502,11 @@ _gw_resolve() {
   if [[ ! -d "$worktree_path" ]]; then
     echo "creating worktree for '$branch' at '$worktree_path'" >&2
     if git rev-parse --verify "$branch" &>/dev/null; then
-      git worktree add "$worktree_path" "$branch" || return 1
+      git worktree add "$worktree_path" "$branch" >&2 || return 1
     elif git rev-parse --verify "origin/$branch" &>/dev/null; then
-      git worktree add -b "$branch" "$worktree_path" "origin/$branch" || return 1
+      git worktree add -b "$branch" "$worktree_path" "origin/$branch" >&2 || return 1
     else
-      git worktree add -b "$branch" "$worktree_path" || return 1
+      git worktree add -b "$branch" "$worktree_path" >&2 || return 1
     fi
   fi
 
@@ -651,7 +654,7 @@ alias mamba=micromamba
 # pnpm
 export PNPM_HOME="/home/jack/.local/share/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end

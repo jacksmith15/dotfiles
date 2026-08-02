@@ -14,6 +14,12 @@ windows:
     panes:
     - gst
     - agent resume
+- alf:
+    root: ~/repo/Surfline/alfred
+    layout: even-vertical
+    panes:
+    - gst
+    - agent resume
 - htop:
     root: ~/
     layout: even-vertical
