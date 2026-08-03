@@ -16,8 +16,9 @@ backupdir=~/.dotfiles.orig
 dotfiles=(
     aliases
     bashrc
-    # Only these two files under ~/.claude are linked - the rest of that
+    # Only these entries under ~/.claude are linked - the rest of that
     # directory holds credentials/session state that must stay local.
+    claude/rules
     claude/settings.json
     claude/statusline-command.sh
     dircolors
@@ -207,10 +208,11 @@ install() {
         cd $backupdir || exit 1
         touch check-backup.txt
 
-        # Backup to ~/.dotfiles.orig
+        # Backup to ~/.dotfiles.orig, preserving nested paths (e.g. claude/rules)
         for dots in "${dotfiles[@]}"
         do
-            /bin/cp -rf ~/.${dots} $backupdir &> /dev/null
+            mkdir -p "$backupdir/$(dirname ".${dots}")"
+            /bin/cp -rf ~/."${dots}" "$backupdir/.${dots}" &> /dev/null
         done
 
         # Backup some folder in ~/.config to ~/.dotfiles.orig/.config
@@ -234,6 +236,8 @@ install() {
     # Install config.
     for dots in "${dotfiles[@]}"
     do
+        # Nested entries (e.g. claude/rules) need their parent to exist first.
+        mkdir -p ~/"$(dirname ".${dots}")"
         /bin/rm -rf ~/."${dots}"
         /bin/ln -fs "$dotfilesdir/${dots}" ~/."${dots}"
     done
@@ -258,9 +262,10 @@ uninstall() {
     if [ -f $backupdir/check-backup.txt ]; then
         for dots in "${dotfiles[@]}"
         do
-            /bin/rm -rf ~/${dots}
-            /bin/cp -rf $backupdir/${dots} ~/ &> /dev/null
-            /bin/rm -rf $backupdir/${dots}
+            /bin/rm -rf ~/."${dots}"
+            mkdir -p ~/"$(dirname ".${dots}")"
+            /bin/cp -rf "$backupdir/.${dots}" ~/."${dots}" &> /dev/null
+            /bin/rm -rf "$backupdir/.${dots}"
         done
 
         for dots_conf in "${dotfiles_config[@]}"
