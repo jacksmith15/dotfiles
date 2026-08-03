@@ -16,6 +16,10 @@ backupdir=~/.dotfiles.orig
 dotfiles=(
     aliases
     bashrc
+    # Only these two files under ~/.claude are linked - the rest of that
+    # directory holds credentials/session state that must stay local.
+    claude/settings.json
+    claude/statusline-command.sh
     dircolors
     gitconfig
     gitignore_global
