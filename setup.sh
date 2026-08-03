@@ -21,7 +21,6 @@ dotfiles=(
     gitignore_global
     oh-my-zsh/custom/themes
     taskrc
-    timetrap.yml
     tmux.conf
     tmuxinator
     vim
@@ -30,10 +29,7 @@ dotfiles=(
     zshenv
     zshrc
 )
-dotfiles_config=(
-    mypy/mypy.ini
-    i3
-)
+dotfiles_config=()
 
 ## key-value for non-default zsh plugins. plugin name -> plugin repo.
 declare -A zsh_plugins=(
@@ -195,7 +191,7 @@ wiki() {
 dropbox() {
     echo -e $magenta"Installing dropbox..."$white
     DROPBOX_FOLDER=~/Dropbox
-    mkdir -p DROPBOX_FOLDER
+    mkdir -p "$DROPBOX_FOLDER"
     sudo apt install nautilus-dropbox
 }
 

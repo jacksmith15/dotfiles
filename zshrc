@@ -28,32 +28,24 @@ export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## zsh plugins to use
 plugins=(
-  # aws
-  # django
   docker
   docker-compose
   extract
   git
-  jira
   kubectl
   pip
-  poetry
   python
   sublime
-  # taskwarrior
   thefuck
   urltools
   zsh-autosuggestions
 )
 
-## Add custom and timetrap completions (must be before compinit in oh-my-zsh)
-fpath=(/var/lib/gems/2.5.0/gems/timetrap-1.15.1/completions/zsh $HOME/.zsh/completions $fpath)
+## Add custom completions (must be before compinit in oh-my-zsh)
+fpath=($HOME/.zsh/completions $fpath)
 
 [[ -n "$CURSOR_AGENT" ]] && ZSH_DISABLE_COMPFIX=true
 source "$ZSH/oh-my-zsh.sh"
-
-## Base16 Shell.
-[ -n "$PS1" ] && [ -s "$BASE16_SHELL/profile_helper.sh" ] && eval "$("$BASE16_SHELL/profile_helper.sh")"
 
 
 ################################################################################
@@ -80,9 +72,6 @@ export SUBLIME_CONFIG="$HOME"/.config/sublime-text/Packages/User
 
 ## sublime project directory
 export SUBLIME_PROJECT_DIR="$HOME"/proj
-
-## jira url
-export JIRA_URL="https://wavetrak.atlassian.net/"
 
 ## Tfenv
 export PATH="$HOME/.tfenv/bin:$PATH"
@@ -136,12 +125,6 @@ fi
 export WORKON_HOME=$HOME/venvs
 export PROJECT_HOME=$HOME/repo
 source /home/jack/.pyenv/versions/"$PYTHON_VERSION"/bin/virtualenvwrapper.sh
-
-
-
-## Poetry
-export POETRY_HOME="$HOME/.poetry"
-export PATH="$POETRY_HOME/bin:$PATH"
 
 
 ## The Fuck
@@ -319,7 +302,7 @@ function f-alias {
 ### Get the description of a function defined in zshrc.
 function f-func {
   local func=$1
-  grep -B 1 "$func" "$$HOME"/.zshrc
+  grep -B 1 "$func" "$HOME"/.zshrc
 }
 
 # Send a PUT request with JSON body.
@@ -402,12 +385,6 @@ function grbbg {
   git log --decorate --oneline --graph "$hash"
 }
 
-### Timetrap in using current git branch as tag.
-function tgit {
-  local here=`git symbolic-ref HEAD | sed -e 's,refs/heads/[a-z]*/\(.*\),\1,'`
-  t in "$here"
-}
-
 function git-cloc {
   local repo="$1"
   git clone --depth 1 "$repo" temp-linecount-repo &&
@@ -429,39 +406,6 @@ function ticket {
 }
 
 ### Switch between git worktrees
-# gws() {
-#   local branch="$1"
-#   local repo_root repo_name worktree_path
-
-#   repo_root=$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
-#   if [[ $? -ne 0 ]]; then
-#     echo "gws: not inside a git repository"
-#     return 1
-#   fi
-#   repo_root="${repo_root%/.git}"
-
-#   if [[ -z "$branch" ]]; then
-#     cd "$repo_root"
-#     return 0
-#   fi
-
-#   repo_name=$(basename "$repo_root")
-#   worktree_path="${HOME}/worktrees/${repo_name}/${branch}"
-
-#   if [[ ! -d "$worktree_path" ]]; then
-#     echo "gws: creating worktree for '$branch' at '$worktree_path'"
-#     if git rev-parse --verify "$branch" &>/dev/null; then
-#       # Branch exists, just create a worktree for it
-#       git worktree add "$worktree_path" "$branch" || return 1
-#     else
-#       # Branch doesn't exist, create it
-#       git worktree add -b "$branch" "$worktree_path" || return 1
-#     fi
-#   fi
-
-#   cd "$worktree_path"
-# }
-
 _gw_resolve() {
   local branch="$1"
   local repo_root repo_name worktree_path relative_path current subdir toplevel
@@ -615,8 +559,6 @@ if command -v tmux>/dev/null; then
 fi
 
 eval "$(thefuck --alias)"
-
-export PATH="$HOME/.poetry/bin:$PATH"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

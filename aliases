@@ -44,6 +44,3 @@ if [ -x /usr/bin/dircolors ]; then
 else
     echo "Warning: dircolors not found"
 fi
-
-# Cookpad
-alias gaws='envchain aws aws --profile=cookpad-global-1'
