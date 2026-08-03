@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -ne 1 ] || [[ "$1" != */* ]]; then
+    echo "Usage: clone <owner>/<repository>" >&2
+    exit 1
+fi
+
+owner="${1%%/*}"
+repo="${1#*/}"
+target_dir="$HOME/repo/$owner/$repo"
+
+mkdir -p "$(dirname "$target_dir")"
+git clone "git@github.com:${owner}/${repo}.git" "$target_dir"

@@ -250,6 +250,15 @@ install() {
         /bin/ln -fs "$dotfilesdir/${dots_conf}" ~/.config/${dots_conf[@]}
     done
 
+    # Install executable scripts from commands/ to ~/bin.
+    mkdir -p ~/bin
+    for cmd in "$dotfilesdir"/commands/*
+    do
+        if [ -x "$cmd" ]; then
+            /bin/ln -fs "$cmd" ~/bin/"$(basename "$cmd")"
+        fi
+    done
+
     # Attach symlinks for dropbox?
 
     echo -e $blue"New dotfiles is installed!\n"$white >&2
