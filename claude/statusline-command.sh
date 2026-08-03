@@ -8,6 +8,9 @@ effort=$(echo "$input" | jq -r '.effort.level // empty')
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
 session_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 week_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+session_resets_at=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
+week_resets_at=$(echo "$input" | jq -r '.rate_limits.seven_day.resets_at // empty')
+now=$(date +%s)
 dir=$(echo "$input" | jq -r '.workspace.current_dir // empty')
 if [ -n "$dir" ] && [ "$dir" = "$HOME" -o "${dir#$HOME/}" != "$dir" ]; then
   dir_display="~${dir#$HOME}"
@@ -51,6 +54,18 @@ join() {
   printf "%b" "$out"
 }
 
+# Extrapolates current usage to the window's reset time; prints 1 if that
+# projects past 100% (on track to exhaust the budget early), else 0.
+is_projected_over() {
+  # args: used_pct resets_at window_seconds now
+  awk -v used="$1" -v resets_at="$2" -v window="$3" -v now="$4" '
+    BEGIN {
+      elapsed = window - (resets_at - now)
+      if (elapsed <= 0) { print "0"; exit }
+      print (used * window / elapsed > 100) ? "1" : "0"
+    }'
+}
+
 top_parts=()
 top_parts+=("$(printf "${COLOR_MODEL}%s${COLOR_RESET}" "$model")")
 
@@ -63,11 +78,19 @@ if [ -n "$used_pct" ]; then
 fi
 
 if [ -n "$session_pct" ]; then
-  top_parts+=("$(printf "${COLOR_SESSION}5h:%.0f%%${COLOR_RESET}" "$session_pct")")
+  session_warn=""
+  if [ -n "$session_resets_at" ] && [ "$(is_projected_over "$session_pct" "$session_resets_at" 18000 "$now")" = "1" ]; then
+    session_warn="!"
+  fi
+  top_parts+=("$(printf "${COLOR_SESSION}5h:%.0f%%%s${COLOR_RESET}" "$session_pct" "$session_warn")")
 fi
 
 if [ -n "$week_pct" ]; then
-  top_parts+=("$(printf "${COLOR_WEEK}7d:%.0f%%${COLOR_RESET}" "$week_pct")")
+  week_warn=""
+  if [ -n "$week_resets_at" ] && [ "$(is_projected_over "$week_pct" "$week_resets_at" 604800 "$now")" = "1" ]; then
+    week_warn="!"
+  fi
+  top_parts+=("$(printf "${COLOR_WEEK}7d:%.0f%%%s${COLOR_RESET}" "$week_pct" "$week_warn")")
 fi
 
 bottom_parts=()
