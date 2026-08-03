@@ -83,23 +83,11 @@ requirements() {
     # Sublime Text
     sublime-text-3
 
-    # Base16 Shell
-    base-16-shell
-
-    # MyPy Stubs
-    # mypy-stubs
-
-    # Gnome extensions
-    gnome-extensions
-
     # Wiki
     # wiki
 
     # Dropbox
     dropbox
-
-    # Taskwarrior
-    # taskwarrior
 }
 
 oh-my-zsh() {
@@ -204,90 +192,11 @@ wiki() {
     fi
 }
 
-base-16-shell() {
-    if [ ! -d "$HOME/.config/base16-shell" ]
-    then
-        echo -e $magenta"\n Cloning base16-shell.."
-        git clone https://github.com/chriskempson/base16-shell.git ~/.config/base16-shell
-    else
-        echo -e $magenta"\n Updating base16-shell... \n"$white
-        cd ~/.config/base16-shell || exit 1
-        git pull
-        ./colortest
-    fi
-}
-
-mypy-stubs() {
-    declare -A target_stubs=(
-        [sqlalchemy]=git@github.com:JelleZijlstra/sqlalchemy-stubs.git
-    )
-    MYPY_CONFIG=~/.config/mypy
-    if [ ! -d "$MYPY_CONFIG" ]
-    then
-        mkdir $MYPY_CONFIG
-    fi
-    MYPY_STUBS="$MYPY_CONFIG"/stubs
-    if [ ! -d "$MYPY_STUBS" ]
-    then
-        mkdir $MYPY_STUBS
-    fi
-    for stub in "${!target_stubs[@]}"
-    do
-        stub_dir="$MYPY_STUBS"/"$stub"
-        if [ ! -d "$stub_dir" ]
-        then
-            echo -e $magenta"\n Cloning mypy stubs: $stub.."$white
-            git clone "${target_stubs[$stub]}" "$stub_dir"
-        else
-            echo -e $magenta"\n Updating mypy stubs: $stub.."$white
-            cd "$stub_dir" || exit 1
-            git pull --ff-only
-        fi
-    done
-}
-
-gnome-extensions() {
-    GNOME_EXTENSIONS=~/.local/share/gnome-shell/extensions
-    if pgrep -f gnome>/dev/null
-    then
-        if [ ! -d "$GNOME_EXTENSIONS" ]
-        then
-            mkdir -p "$GNOME_EXTENSIONS"
-            echo -e $magenta"\n Cloning gnome extensions.."$white
-            git clone git@github.com:jacksmith15/gnome-extensions.git "$GNOME_EXTENSIONS"
-        elif [ ! -d "$GNOME_EXTENSIONS"/.git ]
-        then
-            mv "$GNOME_EXTENSIONS" "$GNOME_EXTENSIONS".bak
-            echo -e $magenta"\n Cloning gnome extensions.."$white
-            git clone git@github.com:jacksmith15/gnome-extensions.git "$GNOME_EXTENSIONS"
-        else
-            echo -e $magenta"\n Updating gnome extensions.."$white
-            cd "$GNOME_EXTENSIONS" || exit 1
-            git pull --ff-only
-        fi
-    else
-        echo -e $red"\n Gnome not found.."$white
-    fi
-}
-
 dropbox() {
     echo -e $magenta"Installing dropbox..."$white
     DROPBOX_FOLDER=~/Dropbox
     mkdir -p DROPBOX_FOLDER
     sudo apt install nautilus-dropbox
-}
-
-taskwarrior() {
-    echo -e $magenta"Installing taskwarrior"$white
-    if sudo test -f /usr/bin/task
-    then
-        echo -e $magenta"\n Updating Taskwarrior... \n"$white
-        sudo apt-get install --only-upgrade taskwarrior | grep 'taskwarrior\|to upgrade'
-    else
-        echo -e $magenta"\n Installing Taskwarrior... \n"$white
-        sudo apt-get update
-        sudo apt-get install taskwarrior | grep 'taskwarrior\|to upgrade'
-    fi
 }
 
 install() {
