@@ -93,7 +93,7 @@ bindkey '^[f' kill-word
 
 ################################################################################
 # Python
-PYTHON_VERSION=3.10.12
+PYTHON_VERSION=3.14.6
 export PYENV_VERSION="$PYTHON_VERSION"
 
 # Disable __pycache__ folders
@@ -128,26 +128,12 @@ source /home/jack/.pyenv/versions/"$PYTHON_VERSION"/bin/virtualenvwrapper.sh
 
 
 ## The Fuck
-if python -c "import thefuck";
+if thefuck --help &> /dev/null;
 then
   true
 else
-    pip3 install thefuck &> /dev/null
+    uv tool install --python 3.11 thefuck &> /dev/null
 fi
-
-## MyPy
-if python -c "import mypy";
-then
-  true
-else
-    pip install mypy &>/dev/null
-fi
-# export MYPY_CONF=~/.config/mypy
-# for stub in "$MYPY_CONF"/stubs/*
-# do
-#   inner_directory="$(basename "$stub")"
-#   export MYPYPATH=$MYPYPATH:$stub/$inner_directory
-# done
 
 ## Rye
 if [ -f "${HOME}/.rye/env" ]

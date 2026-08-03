@@ -3,4 +3,7 @@ export PATH="$PYENV_ROOT/bin:$PATH"
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init - --no-rehash zsh)"
 fi
-. "$HOME/.cargo/env"
+if [ -f "${HOME}/.cargo/env" ]
+then
+  . "${HOME}/.cargo/env"
+fi

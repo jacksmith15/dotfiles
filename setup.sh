@@ -138,16 +138,16 @@ tmux-plugin-manager() {
 sublime-text-3() {
     if sudo test -f /usr/bin/subl
     then
-        echo -e $magenta"\n Updating Sublime Text 3... \n"$white
-        sudo apt-get install --only-upgrade | grep "to upgrade"
+        # echo -e $magenta"\n Updating Sublime Text 3... \n"$white
+        # sudo apt-get install --only-upgrade | grep "to upgrade"
         sublime-text-3-config
     else
-        echo -e $magenta"\n Installing Sublime Text 3... \n"$white
-        wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-        sudo apt-get install apt-transport-https
-        echo "deb https://download.sublimetext.com/ apt/dev/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-        sudo apt-get update
-        sudo apt-get install sublime-text | grep "to upgrade"
+        # echo -e $magenta"\n Installing Sublime Text 3... \n"$white
+        # wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+        # sudo apt-get install apt-transport-https
+        # echo "deb https://download.sublimetext.com/ apt/dev/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+        # sudo apt-get update
+        # sudo apt-get install sublime-text | grep "to upgrade"
         sublime-text-3-config
     fi
 }
