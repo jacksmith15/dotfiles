@@ -48,6 +48,8 @@ Move the file or directory into this repo, then register it in the appropriate m
 
 For `dotfiles`, the leading dot is prefixed to the whole entry, so it lands on the first path segment only — `claude/rules` becomes `~/.claude/rules`, not `~/.claude/.rules`.
 
-Files and directories are handled identically. Link a directory's individual children rather than the directory itself when the destination also holds local state, since the install loop does `rm -rf` on the target before linking — this is why `~/.claude` has three separate entries instead of one, and why `~/.config/ghostty` has just one.
+Files and directories are handled identically. Link a directory's individual children rather than the directory itself when the destination also holds local state, since the install loop does `rm -rf` on the target before linking — this is why `~/.claude` has four separate entries instead of one, and why `~/.config/ghostty` has just one.
+
+The same applies one level down. Linking a whole directory makes its contents all-or-nothing across machines, because anything added locally alongside them counts as divergence and gets the entry skipped. Register the individual file instead where a destination should stay open to machine-local additions: `claude/output-styles/assistant.md` creates `~/.claude/output-styles/` as a real directory holding one symlink, leaving room for a local style beside it.
 
 Backup only ever happens on the first `-i` run (guarded by the `check-backup.txt` sentinel in `~/.dotfiles.orig`). Adding an entry later and re-running `-i` will destroy whatever is already at the destination, so move the original into this repo *before* running the install. Use `-l` to avoid this trap entirely — it refuses to touch a destination that does not already match the repo.

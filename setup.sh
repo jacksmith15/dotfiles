@@ -18,6 +18,7 @@ dotfiles=(
     bashrc
     # Only these entries under ~/.claude are linked - the rest of that
     # directory holds credentials/session state that must stay local.
+    claude/output-styles/assistant.md
     claude/rules
     claude/settings.json
     claude/statusline-command.sh
