@@ -52,6 +52,8 @@ printusage() {
     echo "Options:" >&2
     echo "    --help    Print this message" >&2
     echo "    -i        Install all config" >&2
+    echo "    -l        Repair symlinks only, leaving divergent local config alone" >&2
+    echo "    -ld       Dry run of -l: report what it would do, change nothing" >&2
     echo "    -r        Restore old config" >&2
     echo "    -u        Upgrade dependencies" >&2
 }
@@ -202,6 +204,27 @@ dropbox() {
     sudo apt install nautilus-dropbox
 }
 
+# Emit a "<source>\t<target>" line for every managed link. Both -i and -l read
+# this, so the manifest-to-path mapping lives in exactly one place.
+link_targets() {
+    for dots in "${dotfiles[@]}"
+    do
+        printf '%s\t%s\n' "$dotfilesdir/$dots" "$HOME/.$dots"
+    done
+
+    for dots_conf in "${dotfiles_config[@]}"
+    do
+        printf '%s\t%s\n' "$dotfilesdir/$dots_conf" "$HOME/.config/$dots_conf"
+    done
+
+    for cmd in "$dotfilesdir"/commands/*
+    do
+        if [ -x "$cmd" ]; then
+            printf '%s\t%s\n' "$cmd" "$HOME/bin/$(basename "$cmd")"
+        fi
+    done
+}
+
 install() {
     requirements
     # Backup config.
@@ -236,33 +259,15 @@ install() {
         echo -e "It's used to backup and restore your old config.\n" >&2
     fi
 
-    # Install config.
-    for dots in "${dotfiles[@]}"
+    # Install config. Whatever is at the destination is destroyed - use -l
+    # instead to repair links without clobbering divergent local config.
+    while IFS=$'\t' read -r source target
     do
         # Nested entries (e.g. claude/rules) need their parent to exist first.
-        mkdir -p ~/"$(dirname ".${dots}")"
-        /bin/rm -rf ~/."${dots}"
-        /bin/ln -fs "$dotfilesdir/${dots}" ~/."${dots}"
-    done
-
-    # Install config to ~/.config.
-    mkdir -p ~/.config
-    for dots_conf in "${dotfiles_config[@]}"
-    do
-        # Nested entries (e.g. mypy/mypy.ini) need their parent to exist first.
-        mkdir -p ~/.config/"$(dirname "$dots_conf")"
-        /bin/rm -rf ~/.config/"$dots_conf"
-        /bin/ln -fs "$dotfilesdir/$dots_conf" ~/.config/"$dots_conf"
-    done
-
-    # Install executable scripts from commands/ to ~/bin.
-    mkdir -p ~/bin
-    for cmd in "$dotfilesdir"/commands/*
-    do
-        if [ -x "$cmd" ]; then
-            /bin/ln -fs "$cmd" ~/bin/"$(basename "$cmd")"
-        fi
-    done
+        mkdir -p "$(dirname "$target")"
+        /bin/rm -rf "$target"
+        /bin/ln -fs "$source" "$target"
+    done < <(link_targets)
 
     # Attach symlinks for dropbox?
 
@@ -270,6 +275,105 @@ install() {
     echo "There may be some errors when Terminal is restarted." >&2
     echo "Please read the error messages with care and make sure all packages are installed." >&2
     echo -e "To restore old config, use "$red"./install.sh -r"$white" command." >&2
+}
+
+is_identical() {
+    if [ -d "$1" ]; then
+        diff -rq --no-dereference "$1" "$2" &> /dev/null
+    else
+        cmp -s "$1" "$2"
+    fi
+}
+
+# place_link <dry_run> <source> <target>
+place_link() {
+    [ "$1" -eq 1 ] && return 0
+    mkdir -p "$(dirname "$3")"
+    /bin/rm -rf "$3"
+    /bin/ln -fs "$2" "$3"
+}
+
+# relink [--dry-run]
+relink() {
+    local source target label source_type target_type
+    local linked=0 created=0 adopted=0 skipped=0
+    local dry_run=0 create_label="created" adopt_label="adopted"
+
+    if [ "$1" = "--dry-run" ]; then
+        dry_run=1
+        create_label="create"
+        adopt_label="adopt"
+        echo -e "$magenta""\n Dry run - reporting what -l would do, changing nothing.\n""$white"
+    else
+        echo -e "$magenta""\n Repairing symlinks...\n""$white"
+    fi
+
+    while IFS=$'\t' read -r source target
+    do
+        label="${target#"$HOME"/}"
+
+        if [ ! -e "$source" ]; then
+            printf "  %b%-9s%b %s (no such file in repo: %s)\n" \
+                "$red" "missing" "$white" "$label" "$source" >&2
+            skipped=$((skipped + 1))
+            continue
+        fi
+
+        # -e is false for a broken symlink, so test -L first. realpath -m
+        # normalises without requiring existence, so a repo reached by another
+        # path spelling still counts as linked and a dangling link doesn't error.
+        if [ -L "$target" ]; then
+            if [ "$(realpath -m "$target")" = "$(realpath -m "$source")" ]; then
+                printf "  %b%-9s%b %s\n" "$green" "linked" "$white" "$label"
+                linked=$((linked + 1))
+            else
+                printf "  %b%-9s%b %s (points at %s)\n" \
+                    "$red" "foreign" "$white" "$label" "$(readlink "$target")" >&2
+                skipped=$((skipped + 1))
+            fi
+            continue
+        fi
+
+        if [ ! -e "$target" ]; then
+            place_link "$dry_run" "$source" "$target"
+            printf "  %b%-9s%b %s\n" "$blue" "$create_label" "$white" "$label"
+            created=$((created + 1))
+            continue
+        fi
+
+        if [ -d "$source" ]; then source_type=directory; else source_type=file; fi
+        if [ -d "$target" ]; then target_type=directory; else target_type=file; fi
+        if [ "$source_type" != "$target_type" ]; then
+            printf "  %b%-9s%b %s (repo has a %s, found a %s)\n" \
+                "$red" "conflict" "$white" "$label" "$source_type" "$target_type" >&2
+            skipped=$((skipped + 1))
+            continue
+        fi
+
+        # Only ever replace something already byte-identical to the repo copy,
+        # so there is nothing to back up and nothing to lose.
+        if is_identical "$source" "$target"; then
+            place_link "$dry_run" "$source" "$target"
+            printf "  %b%-9s%b %s\n" "$blue" "$adopt_label" "$white" "$label"
+            adopted=$((adopted + 1))
+        else
+            printf "  %b%-9s%b %s (local %s differs from the repo)\n" \
+                "$red" "diverged" "$white" "$label" "$target_type" >&2
+            skipped=$((skipped + 1))
+        fi
+    done < <(link_targets)
+
+    if [ "$dry_run" -eq 1 ]; then
+        echo -e "\n""$blue""$linked linked, $created to $create_label, $adopted to $adopt_label, $skipped skipped""$white" >&2
+        echo -e "Nothing was changed. Re-run with "$green"-l"$white" to apply." >&2
+    else
+        echo -e "\n""$blue""$linked linked, $created created, $adopted adopted, $skipped skipped""$white" >&2
+    fi
+
+    if [ "$skipped" -gt 0 ]; then
+        echo "Skipped entries are never touched. Reconcile each by hand, then re-run." >&2
+        return 1
+    fi
 }
 
 uninstall() {
@@ -314,6 +418,12 @@ fi
 case "$CMD" in
     -i)
         install
+        ;;
+    -l)
+        relink
+        ;;
+    -ld)
+        relink --dry-run
         ;;
     -r)
         uninstall
