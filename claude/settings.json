@@ -10,5 +10,6 @@
   },
   "outputStyle": "Assistant",
   "effortLevel": "high",
-  "theme": "dark"
+  "theme": "dark",
+  "autoCompactWindow": 300000
 }
