@@ -1,0 +1,63 @@
+################################################################################
+# Ghostty config — https://ghostty.org/docs/config
+# Reload in-place with ctrl+shift+,
+
+################################################################################
+# tmux interop
+
+# Ghostty binds alt+1..alt+9 to tab switching, which swallows the M-1..M-9
+# window switching from ~/.tmux.conf. tmux owns windows here, so hand the keys
+# back. Ghostty registers both a logical (alt+1) and a physical (alt+digit_1)
+# binding for each, so both need unbinding.
+keybind = alt+one=unbind
+keybind = alt+digit_1=unbind
+keybind = alt+two=unbind
+keybind = alt+digit_2=unbind
+keybind = alt+three=unbind
+keybind = alt+digit_3=unbind
+keybind = alt+four=unbind
+keybind = alt+digit_4=unbind
+keybind = alt+five=unbind
+keybind = alt+digit_5=unbind
+keybind = alt+six=unbind
+keybind = alt+digit_6=unbind
+keybind = alt+seven=unbind
+keybind = alt+digit_7=unbind
+keybind = alt+eight=unbind
+keybind = alt+digit_8=unbind
+keybind = alt+nine=unbind
+keybind = alt+digit_9=unbind
+
+# tmux runs on the alternate screen, so nothing ever reaches Ghostty's
+# scrollback buffer. Real scrollback is tmux's history-limit.
+# Cap this well below the 10MB default rather than reserving memory for it.
+scrollback-limit = 1000000
+
+# tmux redraws on resize anyway; the size overlay is just noise.
+resize-overlay = never
+
+################################################################################
+# SSH
+
+# Remote hosts don't ship xterm-ghostty terminfo, so TERM lands broken there.
+# ssh-terminfo installs it on first connect; ssh-env falls back to xterm-256color.
+shell-integration-features = ssh-env,ssh-terminfo
+
+################################################################################
+# Misc quality of life
+
+mouse-hide-while-typing = true
+window-padding-balance = true
+
+################################################################################
+# Appearance
+
+# Ghostty's default palette is Tomorrow Night — a deliberately muted pastel
+# scheme, which is why tmux's green/blue status bar and htop's meters looked
+# washed out. These are the Tango palettes lifted verbatim from Ptyxis, so the
+# 16 ANSI colors match what was there before. See themes/ in this directory.
+theme = dark:tango-ptyxis-dark,light:tango-ptyxis-light
+
+# Keeping Ghostty's bundled JetBrains Mono, but at the point size Ptyxis used
+# (it was set to "Input Semi-Condensed 10"). Default is 12.
+font-size = 10

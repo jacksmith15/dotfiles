@@ -34,7 +34,9 @@ dotfiles=(
     zshenv
     zshrc
 )
-dotfiles_config=()
+dotfiles_config=(
+    ghostty
+)
 
 ## key-value for non-default zsh plugins. plugin name -> plugin repo.
 declare -A zsh_plugins=(
@@ -218,7 +220,8 @@ install() {
         # Backup some folder in ~/.config to ~/.dotfiles.orig/.config
         for dots_conf in "${dotfiles_config[@]}"
         do
-            /bin/cp -rf ~/.config/${dots_conf} $backupdir/.config &> /dev/null
+            mkdir -p "$backupdir/.config/$(dirname "$dots_conf")"
+            /bin/cp -rf ~/.config/"$dots_conf" "$backupdir/.config/$dots_conf" &> /dev/null
         done
 
         # Backup again with Git.
@@ -246,8 +249,10 @@ install() {
     mkdir -p ~/.config
     for dots_conf in "${dotfiles_config[@]}"
     do
-        /bin/rm -rf ~/.config/${dots_conf[@]}
-        /bin/ln -fs "$dotfilesdir/${dots_conf}" ~/.config/${dots_conf[@]}
+        # Nested entries (e.g. mypy/mypy.ini) need their parent to exist first.
+        mkdir -p ~/.config/"$(dirname "$dots_conf")"
+        /bin/rm -rf ~/.config/"$dots_conf"
+        /bin/ln -fs "$dotfilesdir/$dots_conf" ~/.config/"$dots_conf"
     done
 
     # Install executable scripts from commands/ to ~/bin.
@@ -279,9 +284,10 @@ uninstall() {
 
         for dots_conf in "${dotfiles_config[@]}"
         do
-            /bin/rm -rf ~/.config/$dots_conf
-            /bin/cp -rf $backupdir/.config/${dots_conf} ~/.config &> /dev/null
-            /bin/rm -rf $backupdir/.config/${dots_conf}
+            /bin/rm -rf ~/.config/"$dots_conf"
+            mkdir -p ~/.config/"$(dirname "$dots_conf")"
+            /bin/cp -rf "$backupdir/.config/$dots_conf" ~/.config/"$dots_conf" &> /dev/null
+            /bin/rm -rf "$backupdir/.config/$dots_conf"
         done
 
         # Save old config in backup directory with Git.
