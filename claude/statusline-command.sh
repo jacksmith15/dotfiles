@@ -6,6 +6,9 @@ input=$(cat)
 model=$(echo "$input" | jq -r '.model.display_name')
 effort=$(echo "$input" | jq -r '.effort.level // empty')
 used_pct=$(echo "$input" | jq -r '.context_window.used_percentage // empty')
+ctx_tokens=$(echo "$input" | jq -r '.context_window.total_input_tokens // empty')
+ctx_size=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
+project_dir=$(echo "$input" | jq -r '.workspace.project_dir // empty')
 session_pct=$(echo "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 week_pct=$(echo "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
 session_resets_at=$(echo "$input" | jq -r '.rate_limits.five_hour.resets_at // empty')
@@ -16,6 +19,29 @@ if [ -n "$dir" ] && [ "$dir" = "$HOME" -o "${dir#$HOME/}" != "$dir" ]; then
   dir_display="~${dir#$HOME}"
 else
   dir_display="$dir"
+fi
+
+# used_percentage is measured against the model's full context window, but
+# autoCompactWindow (if set, and lower) is what actually triggers compaction, so
+# it's the effective ceiling. It isn't in the status line payload — read it from
+# settings, project-local first, then project, then user.
+autocompact=""
+for settings_file in \
+  "$project_dir/.claude/settings.local.json" \
+  "$project_dir/.claude/settings.json" \
+  "$HOME/.claude/settings.json"; do
+  if [ -z "$autocompact" ] && [ -f "$settings_file" ]; then
+    autocompact=$(jq -r '.autoCompactWindow // empty' "$settings_file" 2>/dev/null)
+  fi
+done
+
+if [ -n "$ctx_tokens" ] && [ -n "$ctx_size" ] && [ -n "$autocompact" ]; then
+  used_pct=$(awk -v tokens="$ctx_tokens" -v size="$ctx_size" -v compact="$autocompact" '
+    BEGIN {
+      limit = (compact < size ? compact : size)
+      pct = tokens / limit * 100
+      print (pct > 100 ? 100 : pct)
+    }')
 fi
 
 branch=""
