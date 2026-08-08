@@ -16,5 +16,5 @@ filetype on
 filetype plugin on
 
 syntax on
-colorscheme paramount
 set background=dark
+colorscheme oxide
