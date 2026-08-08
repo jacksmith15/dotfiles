@@ -1,7 +1,7 @@
 import os
 import re
 from pathlib import Path
-from typing import Optional, List
+from typing import Dict, Optional, List
 
 import sublime
 import sublime_plugin
@@ -28,7 +28,7 @@ class MicromambaVenv(VenvDetector):
 
     def __init__(self, environment_file_names: List[str]):
         self.environment_file_names = environment_file_names
-        self._cache: dict = {}
+        self._cache: Dict = {}
 
     def get_virtualenv(self, directory: Path) -> Optional[Path]:
         mamba_root_prefix = Path.home() / "micromamba"

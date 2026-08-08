@@ -24,7 +24,8 @@ def main():
     if args.command == "list":
         for name in list_plugins():
             installed = (PACKAGES_DIR / name).is_symlink()
-            status = " (installed)" if installed else ""
+            exists = (PACKAGES_DIR / name).exists()
+            status = " (installed)" if installed else " (conflict)" if exists else ""
             print(f"  {name}{status}")
         return
 
