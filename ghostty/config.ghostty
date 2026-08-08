@@ -52,12 +52,8 @@ window-padding-balance = true
 ################################################################################
 # Appearance
 
-# Ghostty's default palette is Tomorrow Night — a deliberately muted pastel
-# scheme, which is why tmux's green/blue status bar and htop's meters looked
-# washed out. These are the Tango palettes lifted verbatim from Ptyxis, so the
-# 16 ANSI colors match what was there before. See themes/ in this directory.
 theme = dark:tango-ptyxis-dark,light:tango-ptyxis-light
 
-# Keeping Ghostty's bundled JetBrains Mono, but at the point size Ptyxis used
-# (it was set to "Input Semi-Condensed 10"). Default is 12.
-font-size = 10
+font-family = Input
+
+font-size = 9
