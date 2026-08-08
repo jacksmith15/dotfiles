@@ -36,7 +36,6 @@ plugins=(
   pip
   python
   sublime
-  thefuck
   urltools
   zsh-autosuggestions
 )
@@ -115,26 +114,6 @@ fi
 #   eval "$(pyenv init --path)"
 # fi
 
-## Virtualenv
-if python -c "import virtualenvwrapper";
-then
-  true
-else
-    pip install virtualenvwrapper &> /dev/null
-fi
-export WORKON_HOME=$HOME/venvs
-export PROJECT_HOME=$HOME/repo
-source /home/jack/.pyenv/versions/"$PYTHON_VERSION"/bin/virtualenvwrapper.sh
-
-
-## The Fuck
-if thefuck --help &> /dev/null;
-then
-  true
-else
-    uv tool install --python 3.11 thefuck &> /dev/null
-fi
-
 ## Rye
 if [ -f "${HOME}/.rye/env" ]
 then
@@ -159,8 +138,14 @@ export NVM_DIR="$HOME/.nvm"
 
 if [ -s "$NVM_DIR/nvm.sh" ]; then
 
-  ### This loads nvm
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  ### This loads nvm, skipping its auto-activation step (~0.4s of alias
+  ### resolution per shell to rediscover the version in alias/default)
+  \. "$NVM_DIR/nvm.sh" --no-use
+
+  ### Activate the default version directly
+  if [ -r "$NVM_DIR/alias/default" ]; then
+    export PATH="$NVM_DIR/versions/node/$(<"$NVM_DIR/alias/default")/bin:$PATH"
+  fi
 
   ### This loads nvm bash_completion
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
@@ -531,8 +516,6 @@ export COLORTERM=truecolor
 if command -v tmux>/dev/null; then
   [[ ! "${TERM}" =~ screen ]] && [[ -z "${TERM_PROGRAM}" || "${TERM_PROGRAM}" != "vscode" ]] && [[ -z "$TMUX" ]] && exec tmux
 fi
-
-eval "$(thefuck --alias)"
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!

@@ -20,7 +20,6 @@ alias gs=gst
 alias gwl='git worktree list'
 
 # Python
-alias mkvirtualenv3="mkvirtualenv --python=/usr/bin/python3"
 alias ipy=python
 
 # Docker

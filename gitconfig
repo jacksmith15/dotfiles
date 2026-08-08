@@ -11,6 +11,7 @@
 	recent = !git reflog | grep \"checkout: moving from\" | awk '{print $NF}' | awk '!seen[$0]++' | head -20
 [push]
 	default = simple
+	autoSetupRemote = true
 [user]
 	name = Jack Smith
 	email = jack.je.smith@gmail.com
