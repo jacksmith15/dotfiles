@@ -2,8 +2,7 @@
 # ENV and ZSH set-up..
 
 ## Path and Locale.
-export GOPATH=$HOME/scraps/go
-export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/go/bin:$PATH:$GOPATH/bin
+export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:/usr/local/go/bin:$PATH
 export LC_ALL=en_GB.UTF-8
 export LANG=en_GB.UTF-8
 
@@ -18,10 +17,10 @@ ZSH_THEME="oxide"
 
 export UPDATE_ZSH_DAYS=15
 
-## Sensible default for use by `.env` files.
-export ENV=dev
+## History timestamp format (must be set before oh-my-zsh is sourced)
+export HIST_STAMPS="yyyy-mm-dd"
+
 export DROPBOX_FOLDER=~/Dropbox
-export TASKDATA="$DROPBOX_FOLDER"/task
 
 ## Uncomment the following line to enable command auto-correction.
 ## ENABLE_CORRECTION="true"
@@ -55,17 +54,7 @@ source "$ZSH/oh-my-zsh.sh"
 unsetopt prompt_cr prompt_sp
 
 ## Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='vim'
-fi
-
-## Compilation flags
-export ARCHFLAGS="-arch x86_64"
-
-## ssh
-export SSH_KEY_PATH="$HOME/.ssh/rsa_id"
+export EDITOR='vim'
 
 export SUBLIME_CONFIG="$HOME"/.config/sublime-text/Packages/User
 
@@ -182,7 +171,6 @@ if dpkg -s libsource-highlight-common>/dev/null && \
    dpkg -s source-highlight>/dev/null; then
     target=$(dpkg -L libsource-highlight-common | grep lesspipe)
     export LESSOPEN="| $target %s"
-    export less=' -R '
 else
     echo "Make sure source-highlight is installed for less highlighting."
 fi
@@ -493,12 +481,13 @@ gwd() {
 # Final tasks.
 
 ## History configuration
-export HIST_STAMPS="yyyy-mm-dd"
+### HIST_STAMPS is set further up, before oh-my-zsh is sourced.
 
 ### Set file and size
+### HISTSIZE is the in-memory list; SAVEHIST is what gets written to HISTFILE.
 export HISTFILE=~/.zsh_history
-export HISTFILESIZE=1000000000
 export HISTSIZE=1000000000
+export SAVEHIST=1000000000
 
 ### Share history between shells
 setopt SHARE_HISTORY
