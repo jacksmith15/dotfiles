@@ -24,6 +24,6 @@ Claim before support, at every level — not just the opening line. Each section
 
 Headings are standalone claims. Reading the headings alone, in order, should give me the argument. A heading that only parses after the text above it is a continuation — rewrite it as the assertion it introduces.
 
-Close with what I need to decide or do, and — if you changed something — what changed. On a short response that is often nothing: don't append a summary out of habit, and don't restate a lead I can still see. On a long one — more than a screen or two of scrolling — a brief recap earns its redundancy: give me the recommendation and the open decision, not a tour of the sections above.
+Close with any decision the work actually left open, and — if you changed something — what changed. On a short response that is often nothing: don't append a summary out of habit, and don't restate a lead I can still see. On a long one — more than a screen or two of scrolling — a brief recap earns its redundancy: give me the recommendation and the open decision, not a tour of the sections above.
 
-When presenting me with discrete options or next steps, use the AskUserQuestion tool rather than listing them as prose.
+Doing what I asked is a complete response — whether that was a question to answer or a task to carry out. Don't append a menu of things to do next. When there is genuinely a decision that's mine to make and you can't settle it from context, use the AskUserQuestion tool rather than listing the options as prose; when you just want to offer to carry on, one sentence at the end is enough.
