@@ -29,7 +29,7 @@
 "   179  #d7af5f  orange      unstaged marker
 "   140  #af87d7  purple
 "   167  #d75f5f  red         error
-"   107  #afaf5f  limegreen   cwd, staged marker
+"   107  #87af5f  limegreen   cwd, staged marker
 "
 " Neutral fills, used where the palette has no step between bg and grey:
 "   237  #383e40  subtle raised background
@@ -57,8 +57,8 @@ hi ColorColumn   ctermfg=NONE ctermbg=237 guifg=NONE    guibg=#383e40
 hi Comment       ctermfg=8   ctermbg=NONE guifg=#555753 guibg=NONE cterm=italic gui=italic
 
 hi Constant      ctermfg=140 ctermbg=NONE guifg=#af87d7 guibg=NONE
-hi String        ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
-hi Character     ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
+hi String        ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
+hi Character     ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
 
 hi Identifier    ctermfg=7   ctermbg=NONE guifg=#d3d7cf guibg=NONE cterm=NONE gui=NONE
 hi Function      ctermfg=179 ctermbg=NONE guifg=#d7af5f guibg=NONE
@@ -103,7 +103,7 @@ hi SpecialKey    ctermfg=8   ctermbg=NONE guifg=#555753 guibg=NONE
 hi Conceal       ctermfg=8   ctermbg=NONE guifg=#555753 guibg=NONE
 
 " Directory matches the oxide prompt's cwd colour.
-hi Directory     ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
+hi Directory     ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
 hi Title         ctermfg=15  ctermbg=NONE guifg=#eeeeec guibg=NONE cterm=bold gui=bold
 " }}}
 
@@ -111,8 +111,8 @@ hi Title         ctermfg=15  ctermbg=NONE guifg=#eeeeec guibg=NONE cterm=bold gu
 hi ErrorMsg      ctermfg=167 ctermbg=NONE guifg=#d75f5f guibg=NONE cterm=bold gui=bold
 hi WarningMsg    ctermfg=179 ctermbg=NONE guifg=#d7af5f guibg=NONE
 hi ModeMsg       ctermfg=179 ctermbg=NONE guifg=#d7af5f guibg=NONE cterm=bold gui=bold
-hi MoreMsg       ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
-hi Question      ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
+hi MoreMsg       ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
+hi Question      ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
 " }}}
 
 " {{{ Selection and search
@@ -147,7 +147,7 @@ hi DiffChange    ctermfg=NONE ctermbg=23  guifg=NONE    guibg=#2c3a45
 hi DiffDelete    ctermfg=167  ctermbg=52  guifg=#d75f5f guibg=#3f2222 cterm=NONE gui=NONE
 hi DiffText      ctermfg=NONE ctermbg=58  guifg=NONE    guibg=#4a3a1a cterm=bold gui=bold
 
-hi Added         ctermfg=107 ctermbg=NONE guifg=#afaf5f guibg=NONE
+hi Added         ctermfg=107 ctermbg=NONE guifg=#87af5f guibg=NONE
 hi Changed       ctermfg=73  ctermbg=NONE guifg=#5fafaf guibg=NONE
 hi Removed       ctermfg=167 ctermbg=NONE guifg=#d75f5f guibg=NONE
 " }}}

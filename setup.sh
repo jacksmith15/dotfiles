@@ -26,6 +26,11 @@ dotfiles=(
     gitconfig
     gitignore_global
     oh-my-zsh/custom/themes
+    # Global pi config lives at ~/.pi/agent/. Only these files are managed
+    # here; session state and trust decisions under ~/.pi/agent/ stay local.
+    pi/agent/settings.json
+    pi/agent/themes/oxide.json
+    pi/agent/themes/oxide-raw.json
     taskrc
     tmux.conf
     tmuxinator

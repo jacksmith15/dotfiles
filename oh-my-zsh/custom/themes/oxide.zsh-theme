@@ -17,11 +17,12 @@ autoload -Uz vcs_info
 
 # use extended color palette if available.
 if [[ "${terminfo[colors]}" -ge 256 ]]; then
-    turquoise="%F{73}"
-    orange="%F{179}"
-    purple="%F{140}"
-    red="%F{167}"
-    limegreen="%F{107}"
+    # xterm-256 cube indices with their truecolor hex equivalents.
+    turquoise="%F{73}"  # #5fafaf  git branch
+    orange="%F{179}"    # #d7af5f  unstaged marker
+    purple="%F{140}"    # #af87d7
+    red="%F{167}"       # #d75f5f  error
+    limegreen="%F{107}" # #87af5f  cwd, staged marker
 else
     turquoise="%F{cyan}"
     orange="%F{yellow}"

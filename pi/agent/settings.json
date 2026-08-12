@@ -1,0 +1,8 @@
+{
+  "lastChangelogVersion": "0.84.1",
+  "theme": "oxide-raw",
+  "defaultProvider": "openrouter",
+  "defaultModel": "z-ai/glm-5.2",
+  "defaultThinkingLevel": "medium",
+  "hideThinkingBlock": true
+}
