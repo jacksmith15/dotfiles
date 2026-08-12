@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
-  "name": "oxide-raw",
+  "name": "oxide",
   "vars": {
     "bg": "#2e3436",
     "bgSink": "#24292a",
@@ -70,7 +70,7 @@
     "syntaxString": "khaki",
     "syntaxNumber": "purple",
     "syntaxType": "turquoise",
-    "syntaxOperator": "offWhite",
+    "syntaxOperator": "red",
     "syntaxPunctuation": "muted",
 
     "thinkingOff": "#3b4042",
