@@ -29,6 +29,7 @@ dotfiles=(
     # Global pi config lives at ~/.pi/agent/. Only these files are managed
     # here; session state and trust decisions under ~/.pi/agent/ stay local.
     pi/agent/settings.json
+    pi/agent/APPEND_SYSTEM.md
     pi/agent/themes/oxide.json
     pi/agent/extensions/block-editor.ts
     taskrc
