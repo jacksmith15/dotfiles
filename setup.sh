@@ -33,6 +33,8 @@ dotfiles=(
     pi/agent/themes/oxide.json
     pi/agent/extensions/block-editor.ts
     pi/agent/extensions/compact-bash.ts
+    pi/agent/extensions/explore.ts
+    pi/agent/extensions/openrouter-cost.ts
     taskrc
     tmux.conf
     tmuxinator
