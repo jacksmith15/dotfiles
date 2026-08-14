@@ -32,6 +32,7 @@ dotfiles=(
     pi/agent/APPEND_SYSTEM.md
     pi/agent/themes/oxide.json
     pi/agent/extensions/block-editor.ts
+    pi/agent/extensions/compact-bash.ts
     taskrc
     tmux.conf
     tmuxinator
