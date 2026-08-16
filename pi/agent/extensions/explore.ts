@@ -73,7 +73,7 @@ const EXPLORE_MODEL: { provider: string; id: string } | undefined = {
  * so asking for "low" there silently gets you "high" - the opposite of cheap.
  * "off" is the only level that means "off" on every model.
  */
-const EXPLORE_THINKING: ThinkingLevel = "off";
+const EXPLORE_THINKING: ThinkingLevel = "medium";
 
 /**
  * Tool allowlist for the subagent. Read-only by construction: no `edit`, no
