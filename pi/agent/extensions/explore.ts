@@ -19,15 +19,17 @@
  *                                    are not loaded into the subagent
  *   - `tools` allowlist            - read-only built-ins only; also the reason
  *                                    the subagent cannot recurse into `explore`
- *   - `EXPLORE_TIMEOUT_MS`         - wall-clock wall against a cheap model that
- *                                    gets stuck in a loop
+ *   - soft time/call budgets      - bound a cheap model that gets stuck in a
+ *                                    loop (see `EXPLORE_SOFT_TIMEOUT_MS`)
  *
  * Trade-offs worth knowing:
  *   - The subagent's tokens/cost do NOT appear in pi's footer (that only sums
  *     the parent session's entries). They are shown on the tool's own result
  *     line instead.
- *   - There is no turn cap, only a time cap. `EXPLORE_TIMEOUT_MS` aborts the
- *     run and returns whatever was gathered.
+ *   - The budgets are soft. Hitting either the time or the call limit ends the
+ *     *sweep*, then buys one tool-free turn for the subagent to write up what it
+ *     already found - so a run that runs long still returns findings, flagged as
+ *     incomplete, rather than nothing at all.
  *   - Compaction inside the subagent is handled by AgentSession itself; a run
  *     that overflows will compact rather than fail.
  *
@@ -81,8 +83,21 @@ const EXPLORE_THINKING: ThinkingLevel = "medium";
  */
 const EXPLORE_TOOLS = ["read", "grep", "find", "ls", "bash"];
 
-/** Wall-clock budget. On expiry the subagent is aborted and partials returned. */
-const EXPLORE_TIMEOUT_MS = 5 * 60 * 1000;
+/**
+ * Budgets for the sweep. These are *soft*: on hitting either, the sweep is
+ * aborted and the subagent gets one tool-free turn to write up what it already
+ * found. That is worth far more than killing it outright, which discards a
+ * context full of findings and hands the parent nothing.
+ */
+const EXPLORE_SOFT_TIMEOUT_MS = 90 * 1000;
+const EXPLORE_MAX_CALLS = 12;
+
+/**
+ * Backstop for the wrap-up turn itself. Generous, because a wrap-up truncated
+ * mid-sentence is the one outcome this whole mechanism exists to avoid - 45s was
+ * measurably too tight on an exhaustive sweep.
+ */
+const EXPLORE_WRAP_UP_TIMEOUT_MS = 75 * 1000;
 
 /** Include AGENTS.md / CLAUDE.md project context files in the subagent's prompt. */
 const INCLUDE_CONTEXT_FILES = true;
@@ -99,6 +114,9 @@ entire deliverable.
 Searching:
 - Start broad, then narrow. Stop as soon as you can answer: a good exploration is
   usually 3-8 tool calls, not 20, unless the question asks for an exhaustive sweep.
+- You have a budget of about ${EXPLORE_MAX_CALLS} tool calls. As you approach it,
+  stop searching and write up what you have. A partial answer that names its gaps
+  is useful; being cut off mid-search is not.
 - Read excerpts, not whole files. You are locating code, not reviewing it.
 - grep and find skip anything in .gitignore, so they cannot see node_modules,
   build output or vendored code. Use bash (rg --no-ignore, or a direct path) when
@@ -126,6 +144,24 @@ Answering:
   admits a gap beats a padded one.
 - If the question has more than one reasonable reading, answer the most likely
   one and note the other in a line.
+`.trim();
+
+/**
+ * Sent as a second turn when the sweep is cut short. The subagent's tools are
+ * stripped before this runs, so it cannot resume searching however much it wants
+ * to - which is what stops the wrap-up allowance being spent on another grep.
+ */
+const WRAP_UP_PROMPT = `
+Stop searching - your search budget is spent and your tools have been removed.
+
+Write your findings now, using only what you have already seen. Follow the
+answering rules: the answer itself in the first sentence, then the file:line
+locations, then what is missing. Be explicit about which parts of the question
+you did not get to, so the caller knows what to re-ask.
+
+Keep this short - a few hundred words. You are out of budget, so prioritise the
+direct answer over completeness; an exhaustive listing that gets truncated
+mid-sentence is worse than a brief one that lands.
 `.trim();
 
 // ---------------------------------------------------------------------------
@@ -196,7 +232,11 @@ interface ExploreUsage {
   turns: number;
 }
 
-type ExploreStatus = "running" | "done" | "timeout";
+/**
+ * "cut-short" means a soft budget fired and the findings below came from the
+ * wrap-up turn; "timeout" means even that did not finish.
+ */
+type ExploreStatus = "running" | "wrapping-up" | "done" | "cut-short" | "timeout";
 
 interface ExploreDetails {
   task: string;
@@ -289,6 +329,17 @@ export default function (pi: ExtensionAPI) {
       "It cannot ask you follow-up questions, so state the question, where to look if you know, and what the answer should contain.",
       "Returns the subagent's written findings only - its tool calls never enter your context.",
     ].join(" "),
+
+    // Without a promptSnippet, pi omits the tool from the system prompt's
+    // "Available tools" list entirely, and the parent never reaches for it.
+    // The guidelines have to state a mechanical test - "prefer explore when a
+    // question spans many files" reads as a preference and gets ignored.
+    promptSnippet: "Hand a codebase search to a read-only subagent; only its findings enter your context",
+    promptGuidelines: [
+      "Before your first search, decide whether the question names a specific file or symbol. If it does not, call explore instead of searching yourself - do not open with bash, grep, find or read on an open-ended question.",
+      "Searching by hand is only for questions you can answer in one or two calls. If you find yourself about to run a third search command on the same question, you should have called explore.",
+      "Do not call explore when the user names the file, names the symbol, asks a general programming question, or asks for one command's output.",
+    ],
     parameters: ExploreParams,
 
     async execute(_toolCallId, params, signal, onUpdate, ctx) {
@@ -339,10 +390,20 @@ export default function (pi: ExtensionAPI) {
         sessionManager: SessionManager.inMemory(ctx.cwd),
       });
 
+      // `cutShort` records *why* the sweep ended early, and doubles as the flag
+      // for whether a wrap-up turn is owed.
+      let cutShort: "time" | "calls" | undefined;
+      const cutSweepShort = (reason: "time" | "calls") => {
+        if (cutShort || details.status !== "running") return;
+        cutShort = reason;
+        void session.abort();
+      };
+
       const unsubscribe = session.subscribe((event) => {
         if (event.type === "tool_execution_start") {
           details.calls.push({ name: event.toolName, args: (event.args ?? {}) as Record<string, unknown> });
           emit();
+          if (details.calls.length >= EXPLORE_MAX_CALLS) cutSweepShort("calls");
         } else if (event.type === "message_end") {
           const message = event.message as { role?: string; usage?: Record<string, any> };
           if (message.role !== "assistant") return;
@@ -360,32 +421,57 @@ export default function (pi: ExtensionAPI) {
         }
       });
 
-      let timedOut = false;
-      const onTimeout = () => {
-        timedOut = true;
-        void session.abort();
-      };
       const onAbort = () => void session.abort();
-      const timer = setTimeout(onTimeout, EXPLORE_TIMEOUT_MS);
+      const softTimer = setTimeout(() => cutSweepShort("time"), EXPLORE_SOFT_TIMEOUT_MS);
+      let wrapUpTimer: ReturnType<typeof setTimeout> | undefined;
       signal?.addEventListener("abort", onAbort, { once: true });
 
       try {
         await session.prompt(params.task);
+        clearTimeout(softTimer);
 
         if (signal?.aborted) throw new Error("explore: aborted");
 
-        details.status = timedOut ? "timeout" : "done";
+        let hardTimedOut = false;
+        if (cutShort) {
+          // Stripping the tools makes it structurally impossible for the wrap-up
+          // to keep searching, so the allowance below buys a write-up and nothing
+          // else. pi synthesises tool results for calls the abort interrupted, so
+          // the history is well-formed and the session accepts another turn.
+          session.setActiveToolsByName([]);
+          details.status = "wrapping-up";
+          emit();
+
+          wrapUpTimer = setTimeout(() => {
+            hardTimedOut = true;
+            void session.abort();
+          }, EXPLORE_WRAP_UP_TIMEOUT_MS);
+          await session.prompt(WRAP_UP_PROMPT);
+          clearTimeout(wrapUpTimer);
+
+          if (signal?.aborted) throw new Error("explore: aborted");
+        }
+
+        details.status = hardTimedOut ? "timeout" : cutShort ? "cut-short" : "done";
         details.output = finalOutput(session.state.messages as any);
 
-        // A timeout aborts the run, which also sets state.errorMessage - so only
-        // treat an error as fatal when we did not cause it ourselves.
+        // Our own aborts set state.errorMessage, so an error is only fatal when
+        // we did not cause it. A completed wrap-up clears the field itself.
         const errorMessage = session.state.errorMessage;
-        if (!timedOut && !details.output && errorMessage) throw new Error(`explore: ${errorMessage}`);
+        if (!hardTimedOut && !details.output && errorMessage) throw new Error(`explore: ${errorMessage}`);
 
         let text = details.output || "(the subagent returned no findings)";
-        if (timedOut) {
-          if (!details.output) text = "(no findings before the time budget expired)";
-          text += `\n\n[explore hit its ${formatDuration(EXPLORE_TIMEOUT_MS)} budget after ${details.calls.length} tool calls; anything above may be incomplete]`;
+        if (cutShort) {
+          const spent =
+            cutShort === "calls"
+              ? `its ${EXPLORE_MAX_CALLS}-call budget`
+              : `its ${formatDuration(EXPLORE_SOFT_TIMEOUT_MS)} budget`;
+          if (hardTimedOut) {
+            if (!details.output) text = "(no findings; the subagent did not finish writing up)";
+            text += `\n\n[explore spent ${spent} after ${details.calls.length} tool calls and then ran out of time writing up; anything above may be incomplete]`;
+          } else {
+            text += `\n\n[explore stopped searching at ${spent} (${details.calls.length} tool calls) and wrote up what it had; ask again for anything it flagged as missing]`;
+          }
         }
 
         const result: AgentToolResult<ExploreDetails> = {
@@ -394,7 +480,8 @@ export default function (pi: ExtensionAPI) {
         };
         return result;
       } finally {
-        clearTimeout(timer);
+        clearTimeout(softTimer);
+        clearTimeout(wrapUpTimer);
         signal?.removeEventListener("abort", onAbort);
         unsubscribe();
         session.dispose();
@@ -435,7 +522,7 @@ export default function (pi: ExtensionAPI) {
 
       const icon = context.isError
         ? theme.fg("error", "✗")
-        : details.status === "timeout"
+        : details.status === "timeout" || details.status === "cut-short"
           ? theme.fg("warning", "⏱")
           : theme.fg("success", "✓");
       const usage = formatUsage(details.usage, details.model);
@@ -460,7 +547,9 @@ export default function (pi: ExtensionAPI) {
       // Collapsed: recent tool calls while the subagent works, so the row shows
       // progress; once done, just the headline - the calls are what ctrl+o is for.
       let text = "";
-      if (details.status === "running") {
+      if (details.status === "wrapping-up") {
+        text += `${theme.fg("warning", "⏱")} ${theme.fg("muted", `${details.calls.length} tool calls; writing up...`)}\n`;
+      } else if (details.status === "running") {
         const shown = details.calls.slice(-COLLAPSED_CALL_COUNT);
         const skipped = details.calls.length - shown.length;
         if (skipped > 0) text += `${theme.fg("muted", `... ${skipped} earlier calls`)}\n`;
