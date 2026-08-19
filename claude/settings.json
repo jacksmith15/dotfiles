@@ -10,6 +10,34 @@
   },
   "outputStyle": "Assistant",
   "effortLevel": "high",
+  "autoCompactWindow": 300000,
   "theme": "dark",
-  "autoCompactWindow": 300000
+  "autoMode": {
+    "environment": [
+      "### Org-wide",
+      "**Organization**: None configured",
+      "**Cloud provider(s)**: None configured",
+      "**Repository visibility**: private (jacksmith15/filament, confirmed via gh)",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: main (default); no branch protection rules or rulesets listed via gh",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: The trusted repo (jacksmith15/filament) and its remote origin (github.com:jacksmith15/filament.git) only — no additional orgs configured",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: any file or store holding personal data, confidential business data, credentials, regulated data, or similarly sensitive material; preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar. Note: .env, .env*.local are gitignored — treat as secret-bearing; LLM endpoint config in localStorage/env vars (FILAMENT_* vars) is app config that must not leak between machines per CLAUDE.md",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited)",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (Next.js/React/Tailwind app, filament — game engine + eval tooling)",
+      "**Trusted repo**: jacksmith15/filament (private, working directory), remote origin github.com:jacksmith15/filament.git",
+      "**Org-specific CLIs**: None configured — project tooling includes pnpm, uv, corepack, playwright; local LLM endpoints (LM Studio / Ollama) configured via /settings or FILAMENT_* env vars, not org infra",
+      "routine under jacksmith15/filament/ prefix: pnpm scripts (dev, lint, test, e2e, soak, make-world, dump-state, export-corpus, check-gold, eval-extraction, rebuild-state), git operations against origin"
+    ]
+  }
 }

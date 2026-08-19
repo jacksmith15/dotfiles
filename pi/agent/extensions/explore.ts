@@ -64,7 +64,7 @@ import { Type } from "typebox";
  */
 const EXPLORE_MODEL: { provider: string; id: string } | undefined = {
   provider: "openrouter",
-  id: "deepseek/deepseek-v4-flash",
+  id: "deepseek/deepseek-v4-flash-0731",
 };
 
 /**
