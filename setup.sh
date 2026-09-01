@@ -35,6 +35,9 @@ dotfiles=(
     pi/agent/extensions/compact-bash.ts
     pi/agent/extensions/explore.ts
     pi/agent/extensions/openrouter-cost.ts
+    # Skills are linked as whole directories so their relative asset
+    # references (e.g. agent-handoff/template.md) resolve at the target.
+    pi/agent/skills/agent-handoff
     taskrc
     tmux.conf
     tmuxinator
