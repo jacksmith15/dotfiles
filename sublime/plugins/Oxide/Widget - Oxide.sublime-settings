@@ -1,0 +1,11 @@
+// Settings for the small editors Sublime embeds in its chrome: the find and
+// replace inputs, the command palette's input, the console.
+//
+// No "color_scheme" key here, which is the point. Adaptive does the same: with
+// nothing specified the widgets fall through to the window's own color scheme,
+// so they take Oxide's background and syntax colours instead of Sublime's
+// stock widget theme. Sublime looks this file up by the active theme's name,
+// so it must be "Widget - Oxide" to pair with Oxide.sublime-theme.
+{
+    "draw_shadows": false
+}

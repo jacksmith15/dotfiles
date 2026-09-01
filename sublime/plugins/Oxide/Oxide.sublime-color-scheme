@@ -1,0 +1,571 @@
+// Sublime Text color scheme -- oxide
+//
+// Matches the oxide theme used by vim (vim/colors/oxide.vim) and the pi agent
+// (pi/agent/themes/oxide.json), which in turn descend from the oxide zsh prompt
+// (oh-my-zsh/custom/themes/oxide.zsh-theme).
+//
+// Palette
+// -------
+// Accents:
+//   #5fafaf  turquoise     types, builtins, calls, keys, links, changed
+//   #d7af5f  orange        special chars, warnings, escapes
+//   #af87d7  purple        constants, numbers, literals
+//   #d75f5f  red           keywords, operators, imports, decorators, errors
+//   #87af5f  limegreen     definition sites, additions
+//   #afaf87  khaki         strings
+//   #c29356  orangeSubtle  parameter names, the receiver (italic)
+//
+// orangeSubtle is the one accent off the xterm-256 cube the other six are
+// picked from, following the same convention pi uses for turquoiseSubtle and
+// limegreenSubtle. Orange is the loudest colour in the palette -- the highest
+// contrast against the background at 6.13:1, and tied for the most saturated
+// at 60% -- which suits how rarely escapes and in-string specials come up, and
+// does not suit how often parameters do. It keeps the hue, so the slot still
+// reads as orange, and takes both loudness axes down: 4.58:1 and 47%, level
+// with turquoise and purple. It has to stay that saturated to stay clear of
+// khaki; desaturating further walks it into the colour used for strings, which
+// parameters routinely sit beside in f(name="x").
+//
+// Neutrals. This file covers the buffer only; the greys the surrounding chrome
+// steps through live in Oxide.sublime-theme.
+//   #2e3436  bg          background
+//   #383f41  bgRaise1    cursor line, fenced code, popups
+//   #424a4d  bgRaise2    indent guides
+//   #4d5659  bgRaise3    inactive selection
+//   #585d5e  border      gutter numbers, invisibles, minimap border
+//   #626768  selected    selection
+//   #777b7c  muted       comments, punctuation
+//   #d7d7d7  offWhite    text
+//
+// Blended backgrounds: bg mixed 14.6% toward its accent (the ratio pi uses for
+// its success/error fills), doubled to 28% for the intra-line diff spans so a
+// changed word reads as an intensification of the changed line.
+//
+// Names
+// -----
+// Sublime resolves names far more finely than vim's syntax files do, so the
+// accents divide along one line vim cannot draw: whether a name is being
+// introduced or reached for.
+//
+//   limegreen     the definition site -- the name after def, class or type
+//   turquoise     a name being used as a callable or a type -- calls,
+//                 builtins, library types, base classes -- and the names of
+//                 slots: mapping keys, HTML attributes, CSS properties
+//   orangeSubtle  a parameter name, at either end: the slots in a def, the
+//                 keywords that fill them at a call site, and the receiver
+//                 (self, cls, this, super), which is italic to set it apart
+//   offWhite      everything else, which is most data
+//
+// Mapping keys are the one assignment still in the air. They sit on turquoise
+// with the other slot names; the case for moving them to orangeSubtle with the
+// parameters is at the Mapping key rule.
+//
+// Two of these part from vim, which has no equivalent distinction to make and
+// leaves calls and parameters as plain text. The call-site divergence is the
+// deliberate one; see the note above that rule.
+{
+    "name": "Oxide",
+
+    "variables":
+    {
+        "bg": "#2e3436",
+        "bgRaise1": "#383f41",
+        "bgRaise2": "#424a4d",
+        "bgRaise3": "#4d5659",
+        "border": "#585d5e",
+        "selected": "#626768",
+        "muted": "#777b7c",
+        "offWhite": "#d7d7d7",
+
+        "turquoise": "#5fafaf",
+        "orange": "#d7af5f",
+        "purple": "#af87d7",
+        "red": "#d75f5f",
+        "limegreen": "#87af5f",
+        "limegreenSubtle": "#8eac72",
+        "orangeSubtle": "#c29356",
+        "khaki": "#afaf87",
+
+        // bg blended 14.6% toward the accent, and 28% for the ".char" spans.
+        "successBg": "#3b463c",
+        "successBgStrong": "#475641",
+        "errorBg": "#4c3a3b",
+        "errorBgStrong": "#5d4041",
+        "changeBg": "#354648",
+        "changeBgStrong": "#3c5658",
+
+        // Sublime derives these from the scheme and hands them to the UI theme.
+        // Pinning them here means any theme -- Adaptive, Oxide, or a third
+        // party -- picks up oxide's accents rather than an approximation of
+        // them. Oxide.sublime-theme sets the same values directly, so the two
+        // agree whether or not a theme consults these.
+        "--background": "#2e3436",
+        "--foreground": "#d7d7d7",
+        "--accent": "#5fafaf",
+        "--redish": "#d75f5f",
+        "--orangish": "#d7af5f",
+        "--yellowish": "#afaf87",
+        "--greenish": "#87af5f",
+        "--cyanish": "#5fafaf",
+        "--bluish": "#5fafaf",
+        "--purplish": "#af87d7",
+        "--pinkish": "#af87d7"
+    },
+
+    "globals":
+    {
+        "background": "var(bg)",
+        "foreground": "var(offWhite)",
+        "accent": "var(turquoise)",
+        "caret": "var(offWhite)",
+        "block_caret": "var(offWhite)",
+        "invisibles": "var(border)",
+
+        // Selection sets background only, so syntax colours survive it.
+        "line_highlight": "var(bgRaise1)",
+        "selection": "var(selected)",
+        "selection_border": "var(selected)",
+        "inactive_selection": "var(bgRaise3)",
+        "misspelling": "var(red)",
+        "shadow": "color(black alpha(0.25))",
+
+        // Chrome sits on 'border', one step dimmer than comments, so line
+        // numbers recede further than anything you are meant to read. The
+        // current line's number is the exception and rises to body text --
+        // this is where vim's CursorLineNr uses orange, but vim has no line
+        // highlight behind it to say the same thing, and Sublime does.
+        "gutter": "var(bg)",
+        "gutter_foreground": "var(border)",
+        "gutter_foreground_highlight": "var(offWhite)",
+        "fold_marker": "var(orange)",
+        "minimap_border": "var(border)",
+
+        "guide": "var(bgRaise2)",
+        "active_guide": "var(turquoise)",
+        "stack_guide": "color(var(turquoise) alpha(0.5))",
+
+        // Warmer means active: khaki for every match, orange for the one under
+        // the cursor. 'highlight' outlines the other occurrences of the word
+        // under the caret, so it stays on the cool accent.
+        "highlight": "var(turquoise)",
+        "find_highlight": "var(khaki)",
+        "find_highlight_foreground": "var(bg)",
+
+        // vim renders MatchParen as a raised background; Sublime's equivalent
+        // knob is an underline, which reads the same way without disturbing the
+        // token's colour.
+        "brackets_options": "underline",
+        "brackets_foreground": "var(offWhite)",
+        "bracket_contents_options": "underline",
+        "bracket_contents_foreground": "var(turquoise)",
+        "tags_options": "stippled_underline",
+        "tags_foreground": "var(orange)",
+
+        "line_diff_width": "2",
+        "line_diff_added": "var(limegreen)",
+        "line_diff_modified": "var(turquoise)",
+        "line_diff_deleted": "var(red)",
+
+        // Styling for minihtml popups (hover documentation, build errors).
+        // Kept on one line: Sublime's JSON parser tolerates comments and
+        // trailing commas but not literal newlines inside a string.
+        "popup_css": "html { background-color: #383f41; color: #d7d7d7; } body { font-size: 12px; margin: 0; } .dark, .light { padding: 0.6rem 0.8rem; } h1, h2, h3, h4, h5, h6 { color: #d7d7d7; font-size: 1.0rem; margin: 0 0 0.4rem 0; } a { color: #5fafaf; text-decoration: none; } code, tt { background-color: #2e3436; color: #8eac72; padding: 0 0.2rem; } .type { color: #5fafaf; } .keyword { color: #d75f5f; } .comment { color: #777b7c; font-style: italic; } .string { color: #afaf87; } .error { color: #d75f5f; } .success { color: #87af5f; }"
+    },
+
+    "rules":
+    [
+        // -- Comments -------------------------------------------------------
+        {
+            "name": "Comment",
+            "scope": "comment, punctuation.definition.comment",
+            "foreground": "var(muted)",
+            "font_style": "italic"
+        },
+        {
+            "name": "TODO / FIXME",
+            "scope": "comment keyword.codetag, comment meta.toc-list.banner",
+            "foreground": "var(orange)",
+            "font_style": "bold italic"
+        },
+
+        // -- Literals -------------------------------------------------------
+        // Purple is for values the language hands you already made: numbers,
+        // booleans, None, character literals. Strings get their own colour
+        // because they are the one literal you read as prose.
+        {
+            "name": "Constant",
+            "scope": "constant",
+            "foreground": "var(purple)"
+        },
+        {
+            "name": "String",
+            "scope": "string, punctuation.definition.string",
+            "foreground": "var(khaki)"
+        },
+        {
+            "name": "Escape sequence",
+            "scope": "constant.character.escape, constant.other.placeholder",
+            "foreground": "var(orange)"
+        },
+        {
+            "name": "Regex special",
+            "scope": "string.regexp keyword.operator, string.regexp keyword.control, string.regexp constant.other.character-class",
+            "foreground": "var(orange)"
+        },
+        {
+            "name": "Interpolation",
+            "scope": "punctuation.section.interpolation, punctuation.definition.template-expression",
+            "foreground": "var(orange)"
+        },
+        {
+            "name": "Numeric suffix / base",
+            "scope": "storage.type.numeric, punctuation.definition.numeric.base",
+            "foreground": "var(purple)"
+        },
+
+        // -- Names ----------------------------------------------------------
+        {
+            "name": "Variable",
+            "scope": "variable, variable.member, variable.other",
+            "foreground": "var(offWhite)"
+        },
+        // Parameter names take their own accent, so a keyword argument at a
+        // call site reads as the name of a slot rather than as one more local.
+        // Sublime scopes both ends the same way -- the names in a def and the
+        // keywords in f(x=1) are both variable.parameter -- so one rule covers
+        // the pair. Parameters are frequent, so they take the quieter orange
+        // and leave the full-strength one to the rare things it was sized for.
+        //
+        // Alternatives, if this still reads wrong: #af875f (xterm 137) is the
+        // same idea taken further, dropping orange onto the tonal tier the calm
+        // accents share -- but at 3.89:1 it may be too quiet to read at a
+        // glance, and its dE of 21 from khaki risks reading as a string.
+        // #d787af (xterm 175) goes the other way, an unused hue at 4.80:1 that
+        // is clearly separate from everything (nearest dE 28) and would free
+        // orange from doing two jobs -- at the cost of a seventh hue.
+        {
+            "name": "Parameter",
+            "scope": "variable.parameter",
+            "foreground": "var(orangeSubtle)"
+        },
+        // The receiver -- self and cls in Python, this and super in JS -- reads
+        // as the parameter it effectively is, rather than as a keyword. In
+        // Python that is literal: self really is the first parameter, and
+        // Sublime scopes it as variable.parameter and variable.language at
+        // once. The italic is what still separates it from an ordinary
+        // parameter now that they share a colour, so the two selectors here
+        // both matter -- the descendant one catches self in a def signature,
+        // where the parameter rule above would otherwise strip the italic.
+        {
+            "name": "Language variable",
+            "scope": "variable.language, variable.parameter variable.language",
+            "foreground": "var(orangeSubtle)",
+            "font_style": "italic"
+        },
+        // The T in def f[T](x: T) is scoped as a parameter but is a definition
+        // site, so it goes with the other names being introduced.
+        {
+            "name": "Type parameter",
+            "scope": "variable.parameter.type",
+            "foreground": "var(limegreen)"
+        },
+        // Call sites join the builtins and types already on turquoise. vim
+        // leaves them plain, so this is a deliberate divergence -- but it
+        // settles the same complaint vim/after/syntax/python.vim raises, from
+        // the other end. That note objects that python.vim accents builtin
+        // calls while calls to your own functions stay plain, and fixes it by
+        // quieting both; here both are accented instead. Either way a call is a
+        // call. The definition keeps limegreen, so "where this name comes from"
+        // and "here it is being used" stay distinct.
+        //
+        // The selector deliberately omits meta.function-call: that scope spans
+        // the whole call including its arguments, so colouring it would tint
+        // every argument that nothing more specific claims.
+        {
+            "name": "Function call",
+            "scope": "variable.function, variable.annotation",
+            "foreground": "var(turquoise)"
+        },
+        {
+            "name": "Definition site",
+            "scope": "entity.name.function, entity.name.class, entity.name.struct, entity.name.enum, entity.name.union, entity.name.trait, entity.name.interface, entity.name.impl, entity.name.type, entity.name.namespace, entity.name.constant, entity.name.label, entity.name.goto-label",
+            "foreground": "var(limegreen)"
+        },
+        {
+            "name": "Other entity names",
+            "scope": "entity.name - (entity.name.section | entity.name.tag)",
+            "foreground": "var(limegreen)"
+        },
+
+        // -- Types and builtins ---------------------------------------------
+        // Turquoise means "a name the language gave you" -- types, exceptions
+        // and builtins alike. See the note in vim/after/syntax/python.vim.
+        {
+            "name": "Library type / function / constant",
+            "scope": "support.type, support.class, support.function, support.macro, support.module, support.other, support.constant",
+            "foreground": "var(turquoise)"
+        },
+        {
+            "name": "Inherited class",
+            "scope": "entity.other.inherited-class",
+            "foreground": "var(turquoise)"
+        },
+
+        // -- Keywords and operators -----------------------------------------
+        // Import/include directives are keywords, not a category of their own,
+        // so they sit on red with everything else. That leaves turquoise
+        // meaning exactly one thing.
+        {
+            "name": "Keyword",
+            "scope": "keyword, storage, storage.type, storage.modifier",
+            "foreground": "var(red)"
+        },
+        {
+            "name": "Operator",
+            "scope": "keyword.operator",
+            "foreground": "var(red)"
+        },
+        {
+            "name": "Preprocessor",
+            "scope": "meta.preprocessor, keyword.control.import, keyword.control.export, keyword.other.import",
+            "foreground": "var(red)"
+        },
+
+        // -- Punctuation ----------------------------------------------------
+        {
+            "name": "Punctuation",
+            "scope": "punctuation, punctuation.separator, punctuation.terminator, punctuation.accessor, punctuation.section",
+            "foreground": "var(muted)"
+        },
+        // The @ of a decorator marks a language construct the way def or class
+        // does, so it takes the keyword colour rather than the special-character
+        // one. Python and JS both scope it punctuation.definition.annotation.
+        // Only the marker is red; the name after it keeps whatever it is -- a
+        // call stays turquoise, an attribute path stays plain.
+        {
+            "name": "Annotation punctuation",
+            "scope": "punctuation.definition.annotation, punctuation.definition.decorator",
+            "foreground": "var(red)"
+        },
+
+        // -- Markup / structured data ---------------------------------------
+        {
+            "name": "Tag name",
+            "scope": "entity.name.tag",
+            "foreground": "var(red)"
+        },
+        {
+            "name": "Tag attribute",
+            "scope": "entity.other.attribute-name",
+            "foreground": "var(turquoise)"
+        },
+        // One rule covers Python and JS object literals, JSON and YAML, which
+        // all scope the key as meta.mapping.key.
+        //
+        // Two readings of a key, and this file has worn both. On turquoise it
+        // groups with the attribute and property names above -- a key names a
+        // slot, and a slot is a place rather than a value. On orangeSubtle it
+        // groups with parameters instead, on the argument that d["timeout"] and
+        // f(timeout=1) name the same kind of thing, and that what separates the
+        // two colours is who chose the name: a CSS property comes from a
+        // vocabulary the language fixed, while a key is yours. To swap, change
+        // this rule and the quotes rule below it together -- they must always
+        // agree, which is the whole point of the second one.
+        {
+            "name": "Mapping key",
+            "scope": "meta.mapping.key string - meta.mapping.key meta meta | meta.mapping.key meta.mapping.key string - meta.mapping.key meta.mapping.key meta meta",
+            "foreground": "var(turquoise)"
+        },
+        // The quotes around a key belong to the key, not to the strings around
+        // it. Without this they fall to the String rule above, which claims
+        // punctuation.definition.string explicitly and so out-specifies the
+        // plain "meta.mapping.key string" selector on exactly those two
+        // characters -- a quoted key comes out with khaki quotes around a
+        // differently coloured name. Monokai avoids this by never naming string
+        // punctuation at all, which is not open to us: the general punctuation
+        // rule would then claim the quotes and turn them grey.
+        {
+            "name": "Mapping key quotes",
+            "scope": "meta.mapping.key punctuation.definition.string - meta.mapping.key meta meta",
+            "foreground": "var(turquoise)"
+        },
+        // Nothing here for YAML's plain scalars: quoting is a syntactic detail
+        // in YAML, not a change of type, so "a: b" and "a: 'b'" get the same
+        // colour and both read as strings. They are string.unquoted, which the
+        // String rule already claims; a plain key is that same scope nested in
+        // meta.mapping.key, and the two-element selector above out-specifies
+        // the bare "string" one, so keys still come out turquoise.
+        {
+            "name": "CSS property name",
+            "scope": "support.type.property-name",
+            "foreground": "var(turquoise)"
+        },
+
+        // -- Invalid --------------------------------------------------------
+        {
+            "name": "Invalid",
+            "scope": "invalid",
+            "foreground": "var(red)",
+            "background": "var(errorBg)"
+        },
+        {
+            "name": "Invalid deprecated",
+            "scope": "invalid.deprecated",
+            "foreground": "var(orange)",
+            "background": "var(errorBg)"
+        },
+
+        // -- Prose ----------------------------------------------------------
+        {
+            "name": "Heading",
+            "scope": "markup.heading, entity.name.section",
+            "foreground": "var(offWhite)",
+            "font_style": "bold"
+        },
+        {
+            "name": "Heading punctuation",
+            "scope": "markup.heading punctuation.definition.heading",
+            "foreground": "var(red)"
+        },
+        {
+            "name": "Link",
+            "scope": "markup.underline.link, string.other.link",
+            "foreground": "var(turquoise)",
+            "font_style": "underline"
+        },
+        {
+            "name": "Link title",
+            "scope": "meta.link string, meta.image string",
+            "foreground": "var(muted)"
+        },
+        {
+            "name": "Bold",
+            "scope": "markup.bold",
+            "font_style": "bold"
+        },
+        {
+            "name": "Italic",
+            "scope": "markup.italic",
+            "font_style": "italic"
+        },
+        {
+            "name": "Underline",
+            "scope": "markup.underline",
+            "font_style": "underline"
+        },
+        {
+            "name": "Strikethrough",
+            "scope": "markup.strikethrough",
+            "font_style": "underline"
+        },
+        {
+            "name": "Bold/italic markers",
+            "scope": "text punctuation.definition.bold, text punctuation.definition.italic",
+            "foreground": "var(purple)"
+        },
+        {
+            "name": "List bullet",
+            "scope": "markup.list punctuation.definition.list_item, markup.list.numbered.bullet",
+            "foreground": "var(purple)"
+        },
+        {
+            "name": "Blockquote",
+            "scope": "markup.quote, markup.quote punctuation.definition.blockquote",
+            "foreground": "var(muted)",
+            "font_style": "italic"
+        },
+        {
+            "name": "Thematic break",
+            "scope": "punctuation.definition.thematic-break",
+            "foreground": "var(border)"
+        },
+        {
+            "name": "Fenced code block",
+            "scope": "markup.raw",
+            "background": "var(bgRaise1)"
+        },
+        {
+            "name": "Inline code",
+            "scope": "markup.raw.inline",
+            "foreground": "var(limegreenSubtle)",
+            "background": "var(bgRaise1)"
+        },
+
+        // -- Diffs ----------------------------------------------------------
+        // The foreground rules colour diff *files*; the background rules below
+        // colour Sublime's inline diff of the buffer against its saved or
+        // committed state.
+        {
+            "name": "Diff header",
+            "scope": "meta.diff, meta.diff.header",
+            "foreground": "var(limegreen)"
+        },
+        {
+            "name": "Diff range",
+            "scope": "meta.diff.range, punctuation.definition.range.diff",
+            "foreground": "var(offWhite)",
+            "font_style": "bold"
+        },
+        {
+            "name": "Diff inserted",
+            "scope": "markup.inserted",
+            "foreground": "var(limegreen)"
+        },
+        {
+            "name": "Diff deleted",
+            "scope": "markup.deleted",
+            "foreground": "var(red)"
+        },
+        {
+            "name": "Diff changed",
+            "scope": "markup.changed",
+            "foreground": "var(turquoise)"
+        },
+        {
+            "scope": "diff.inserted",
+            "background": "var(successBg)"
+        },
+        {
+            "scope": "diff.inserted.char",
+            "background": "var(successBgStrong)"
+        },
+        {
+            "scope": "diff.deleted",
+            "background": "var(errorBg)"
+        },
+        {
+            "scope": "diff.deleted.char",
+            "background": "var(errorBgStrong)"
+        },
+        {
+            "scope": "diff.modified",
+            "background": "var(changeBg)"
+        },
+        {
+            "scope": "diff.modified.char",
+            "background": "var(changeBgStrong)"
+        },
+
+        // -- Build output / linter messages ----------------------------------
+        {
+            "scope": "message.error",
+            "foreground": "var(red)"
+        },
+        {
+            "scope": "message.warning",
+            "foreground": "var(orange)"
+        },
+        {
+            "scope": "message.info",
+            "foreground": "var(turquoise)"
+        },
+        {
+            "scope": "constant.numeric.line-number",
+            "foreground": "var(border)"
+        },
+        {
+            "scope": "constant.numeric.line-number.match",
+            "foreground": "var(orange)"
+        }
+    ]
+}

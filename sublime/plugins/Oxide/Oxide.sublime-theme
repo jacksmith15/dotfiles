@@ -1,0 +1,447 @@
+// Sublime Text UI theme -- oxide
+//
+// Companion to Oxide.sublime-color-scheme, and to the oxide themes for vim
+// (vim/colors/oxide.vim) and the pi agent (pi/agent/themes/oxide.json).
+//
+// This extends Adaptive rather than restating it. Adaptive is already written
+// entirely in terms of the active color scheme -- every surface is some blend
+// of var(--background) -- so it lands close to oxide as soon as the Oxide
+// color scheme is selected, and it brings the Default theme's texture assets
+// (tab shapes, scrollbar pucks, tree arrows, checkboxes) with it. What is left
+// is to replace Adaptive's computed blends with oxide's own grey ramp, so the
+// chrome steps in the same increments the vim and pi themes step in instead of
+// in percentages of the editor background.
+//
+// Rules in an extending theme are appended after the parent's, and Sublime
+// applies every matching rule in file order with later ones winning. So a rule
+// here with no "parents"/"attributes" clause overrides Adaptive's more specific
+// rules for the same class. That is deliberate: Adaptive splits most surfaces
+// four ways over the file_dark / file_medium_dark / file_medium / file_light
+// window attributes, and oxide only ever wants the one dark answer.
+//
+// Surfaces
+// --------
+// The chrome that *frames* the editor sinks below it, and the chrome that
+// *overlays* it rises above it:
+//
+//   #292e30  bgFrame   sidebar, tab strip, status bar, title bar
+//   #2e3436  bg        editor, and the selected tab (Sublime tints that from
+//                      the sheet, so it is continuous with the buffer)
+//   #383f41  bgRaise1  find panel, console, command palette, autocomplete,
+//                      popups, tooltips
+//   #424a4d  bgRaise2  hovered rows
+//   #4d5659  bgRaise3  selected rows
+//   #585d5e  border    split borders, scrollbar pucks, chrome glyphs
+{
+    "extends": "Adaptive.sublime-theme",
+
+    "variables":
+    {
+        "bg": "#2e3436",
+        // Half a step below bg, and the one neutral here that the vim and pi
+        // palettes do not have. Their ramp climbs in even increments of about
+        // +10/+11/+12 per channel, with pi's bgSink (#24292a) sitting exactly
+        // one step below bg -- far enough down that a full-height file
+        // explorer reads as a separate application rather than a panel of the
+        // same one. Neither of those themes has a sidebar to put there, so
+        // neither ever needed a level between. This interpolates the ramp,
+        // including its drift: each step tilts a little further blue-green as
+        // it lightens, so G runs +5 above R at bgSink and +6 at bg.
+        "bgFrame": "#292e30",
+        "bgRaise1": "#383f41",
+        "bgRaise2": "#424a4d",
+        "bgRaise3": "#4d5659",
+        "border": "#585d5e",
+        "borderSubtle": "#474c4e",
+        "selected": "#626768",
+        "muted": "#777b7c",
+        "dim": "#6e7273",
+        "offWhite": "#d7d7d7",
+
+        "turquoise": "#5fafaf",
+        "orange": "#d7af5f",
+        "purple": "#af87d7",
+        "red": "#d75f5f",
+        "limegreen": "#87af5f",
+        "khaki": "#afaf87",
+
+        // Adaptive picks one of these four per window depending on how light
+        // the color scheme's background is. Setting all four to the same value
+        // pins the framing chrome regardless of which bucket oxide lands in --
+        // and keeps it right if the editor background is ever nudged.
+        "dark_bg": "var(bgFrame)",
+        "medium_dark_bg": "var(bgFrame)",
+        "medium_bg": "var(bgFrame)",
+        "light_bg": "var(bgFrame)",
+
+        "tabset_dark_bg": "var(bgFrame)",
+        "tabset_medium_dark_bg": "var(bgFrame)",
+        "tabset_medium_bg": "var(bgFrame)",
+        "tabset_light_bg": "var(bgFrame)",
+
+        // Unselected tabs sit on the sunken strip, so their labels take the
+        // comment grey; the selected tab sits on the editor background and
+        // takes body text.
+        "file_tab_unselected_label_color": "var(muted)",
+        "file_tab_unselected_light_label_color": "var(muted)",
+        "file_tab_selected_label_color": "var(offWhite)",
+        "file_tab_selected_light_label_color": "var(offWhite)",
+        "file_tab_angled_unselected_label_color": "var(muted)",
+        "file_tab_angled_unselected_medium_label_color": "var(muted)",
+        "file_tab_angled_unselected_light_label_color": "var(muted)",
+        "file_tab_angled_unselected_label_shadow": "transparent",
+        "file_tab_angled_unselected_medium_label_shadow": "transparent",
+        "file_tab_angled_unselected_light_label_shadow": "transparent",
+
+        "adaptive_dividers": "var(borderSubtle)",
+        "link_fg": "var(turquoise)",
+
+        "tool_tip_bg": "var(bgRaise1)",
+        "tool_tip_fg": "var(offWhite)",
+
+        // The autocomplete panel is tinted from the editor background; this
+        // lifts it the one step to bgRaise1.
+        "auto_complete_bg_dark_tint": "color(white a(0.055))",
+        "auto_complete_selected_row_dark_tint": "var(bgRaise3)",
+        "auto_complete_detail_pane_dark_tint": "color(black a(0.12))",
+        "auto_complete_detail_panel_mono_dark_bg": "var(bg)",
+
+        "viewport_always_visible_color": "color(var(border) a(0.35))",
+        "viewport_hide_show_color": "color(var(border) a(0.5))",
+
+        // Git state in the sidebar and status bar, on the same accents the
+        // color scheme gives diff hunks.
+        "vcs_added": "var(limegreen)",
+        "vcs_staged": "var(limegreen)",
+        "vcs_modified": "var(turquoise)",
+        "vcs_deleted": "var(red)",
+        "vcs_missing": "var(red)",
+        "vcs_unmerged": "var(orange)",
+
+        // Autocomplete kind badges. These follow the color scheme's meanings:
+        // limegreen for things you define, turquoise for things the language
+        // defines, red for keywords, purple for literals and jumps.
+        "kind_function_color": "var(limegreen)",
+        "kind_type_color": "var(turquoise)",
+        "kind_namespace_color": "var(turquoise)",
+        "kind_keyword_color": "var(red)",
+        "kind_variable_color": "var(offWhite)",
+        "kind_snippet_color": "var(khaki)",
+        "kind_markup_color": "var(orange)",
+        "kind_navigation_color": "var(purple)",
+        "kind_name_label_border_color": "color(var(turquoise) a(0.8))",
+
+        "radio_back": "var(bg)",
+        "radio_border-unselected": "var(border)",
+        "radio_selected": "var(turquoise)",
+        "radio_border-selected": "var(turquoise)",
+
+        "checkbox_back": "var(bg)",
+        "checkbox_border-unselected": "var(border)",
+        "checkbox_selected": "var(turquoise)",
+        "checkbox_border-selected": "var(turquoise)",
+        "checkbox-disabled": "var(dim)"
+    },
+
+    "rules":
+    [
+        // {{{ Title bar
+        {
+            "class": "title_bar",
+            "settings": ["themed_title_bar"],
+            "bg": "var(bgFrame)",
+            "fg": "var(muted)",
+            "style": "dark"
+        },
+        // }}}
+
+        // {{{ Side bar
+        // Adaptive shadows the sidebar text to lift it off a blended
+        // background. On a flat one the shadow only smears the glyphs.
+        {
+            "class": "sidebar_heading",
+            "fg": "var(muted)",
+            "shadow_color": "transparent",
+            "shadow_offset": [0, 0]
+        },
+        {
+            "class": "sidebar_label",
+            "fg": "var(offWhite)"
+        },
+        {
+            "class": "sidebar_label",
+            "parents": [{"class": "file_system_entry", "attributes": ["ignored"]}],
+            "color": "var(dim)"
+        },
+        {
+            "class": "sidebar_label",
+            "parents": [{"class": "tree_row", "attributes": ["selected"]}],
+            "fg": "var(offWhite)"
+        },
+        // Hover and selection use flat greys rather than translucent white.
+        // They stop one step short of the buffer's own selection grey: an
+        // editor selection carries syntax colours, but these rows carry
+        // offWhite label text, which needs 4.5:1 to read as body text and only
+        // gets 3.99:1 on #626768. bgRaise3 gives 5.23:1. Order matters: a row
+        // that is both selected and hovered takes whichever comes last.
+        {
+            "class": "tree_row",
+            "attributes": ["selectable", "hover"],
+            "layer0.tint": "var(bgRaise2)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "tree_row",
+            "attributes": ["selected"],
+            "layer0.tint": "var(bgRaise3)",
+            "layer0.opacity": 1.0
+        },
+        // The file type icons need the ./icons directory next to this file, and
+        // will silently not draw at all without it. Every other texture in the
+        // Default theme is named by an explicit package-relative path, so
+        // extending Adaptive inherits it -- icon_folder below reaches
+        // "Theme - Default/common/folder_closed.png" and works from anywhere.
+        // The file type icons are the exception: no theme names them, because
+        // Sublime picks the texture per file (file_type_source, file_type_markup
+        // and so on) and resolves that bare name against the *active theme's*
+        // own package. Adaptive, Default and Default Dark all live inside
+        // Theme - Default, which is where icons/ is; a theme anywhere else has
+        // to carry its own copy. That is why the folders were visible and the
+        // files were not, and why it looked like a colour problem when it was a
+        // missing asset.
+        //
+        // Given they now draw, the tints below differ because the shapes do.
+        // Both are white alpha masks, so weight matters as much as colour, and
+        // over an 18x16 mask the folder is a filled shape carrying 169 units of
+        // alpha while the file icons are hairline outlines -- markup, which
+        // covers HTML, XML and Markdown, carries 21. Matching them by eye means
+        // putting the filled shape on the comment grey and the hairlines on
+        // body text, which lands both at a similar weight rather than at a
+        // similar contrast ratio.
+        {
+            "class": "icon_folder",
+            "layer0.tint": "var(muted)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "icon_folder_dup",
+            "layer0.tint": "var(muted)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "icon_folder_loading",
+            "layer0.tint": "var(muted)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "icon_file_type",
+            "layer0.tint": "var(offWhite)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "vcs_status_badge",
+            "parents": [{"class": "file_system_entry", "attributes": ["untracked"]}],
+            "layer0.tint": "var(muted)"
+        },
+        // }}}
+
+        // {{{ Tabs
+        // Adaptive dims an unselected tab's label with opacity on top of the
+        // colour. The label colour is already the comment grey, so the extra
+        // fade only makes filenames hard to read.
+        {
+            "class": "tab_label",
+            "settings": {"file_tab_style": ["", "rounded", "square"]},
+            "parents": [{"class": "tab_control", "attributes": ["!selected"]}],
+            "opacity": 1.0
+        },
+        {
+            "class": "tab_control",
+            "attributes": ["added"],
+            "layer2.tint": "var(limegreen)"
+        },
+        {
+            "class": "tab_control",
+            "attributes": ["deleted"],
+            "layer2.tint": "var(red)"
+        },
+        // }}}
+
+        // {{{ Split borders
+        // A single hairline in the chrome grey, matching vim's VertSplit,
+        // rather than Adaptive's 2px band of tab-strip colour.
+        {
+            "class": "grid_layout_control",
+            "border_color": "var(border)",
+            "border_size": 1
+        },
+        // }}}
+
+        // {{{ Overlays -- command palette, Goto Anything
+        {
+            "class": "overlay_control",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "quick_panel",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "quick_panel_row",
+            "attributes": ["selected"],
+            "layer0.tint": "var(bgRaise3)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "mini_quick_panel_row",
+            "attributes": ["selected"],
+            "layer0.tint": "var(bgRaise3)",
+            "layer0.opacity": 1.0
+        },
+        // Sublime already bolds the matched characters, so the match colours
+        // only have to lift them one step out of the surrounding grey. An
+        // accent here would compete with the bold rather than add to it, and
+        // would put a third colour in a panel that is otherwise pure neutral.
+        // On the selected row the label is already offWhite, so bold carries
+        // the match on its own.
+        {
+            "class": "quick_panel_label",
+            "fg": "var(muted)",
+            "match_fg": "var(offWhite)",
+            "selected_fg": "var(offWhite)",
+            "selected_match_fg": "var(offWhite)"
+        },
+        {
+            "class": "quick_panel_path_label",
+            "fg": "var(dim)",
+            "match_fg": "var(muted)",
+            "selected_fg": "var(muted)",
+            "selected_match_fg": "var(muted)"
+        },
+        {
+            "class": "quick_panel_label hint",
+            "fg": "var(dim)",
+            "selected_fg": "var(muted)"
+        },
+        {
+            "class": "quick_panel_detail_label",
+            "link_color": "var(turquoise)"
+        },
+        // }}}
+
+        // {{{ Autocomplete and popups
+        {
+            "class": "auto_complete",
+            "tint_index": -1,
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "table_row",
+            "attributes": ["selected"],
+            "layer0.tint": "var(bgRaise3)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "kind_label",
+            "color": "var(offWhite)"
+        },
+        // Adaptive paints minihtml popups white and lets the color scheme's
+        // popup_css cover it. Anything the css does not reach -- padding,
+        // corners -- shows through, so tint the control itself.
+        {
+            "class": "popup_control",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        // }}}
+
+        // {{{ Panels -- find, replace, console
+        {
+            "class": "panel_control",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "switch_project_panel_cancel_container",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "dialog",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "label_control",
+            "fg": "var(offWhite)"
+        },
+        {
+            "class": "title_label_control",
+            "fg": "var(offWhite)"
+        },
+        {
+            "class": "link_label",
+            "fg": "var(turquoise)"
+        },
+        {
+            "class": "label_control",
+            "parents": [{"class": "button_control"}],
+            "shadow_color": "transparent",
+            "shadow_offset": [0, 0]
+        },
+        {
+            "class": "progress_gauge_control",
+            "layer0.tint": "var(turquoise)"
+        },
+        // }}}
+
+        // {{{ Status bar
+        {
+            "class": "status_bar",
+            "layer0.tint": "var(bgFrame)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "label_control",
+            "parents": [{"class": "status_bar"}],
+            "fg": "var(muted)",
+            "shadow_color": "transparent",
+            "shadow_offset": [0, 0]
+        },
+        {
+            "class": "vcs_branch_icon",
+            "layer0.tint": "var(muted)"
+        },
+        {
+            "class": "vcs_changes_annotation",
+            "color": "var(muted)",
+            "border_color": "var(border)"
+        },
+        // }}}
+
+        // {{{ Scrollbars
+        {
+            "class": "scroll_track_control",
+            "layer0.tint": "var(bgRaise1)",
+            "layer0.opacity": 1.0
+        },
+        {
+            "class": "puck_control",
+            "layer0.tint": "var(border)",
+            "layer0.opacity": { "target": 0.8, "speed": 5.0, "interpolation": "smoothstep" }
+        },
+        {
+            "class": "puck_control",
+            "parents": [
+                {"class": "scroll_bar_control", "attributes": ["hover"]},
+                {"class": "scroll_track_control"}
+            ],
+            "layer0.tint": "var(selected)",
+            "layer0.opacity": { "target": 1.0, "speed": 5.0, "interpolation": "smoothstep" }
+        }
+        // }}}
+    ]
+}
