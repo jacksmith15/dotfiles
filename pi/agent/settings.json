@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.84.3",
   "theme": "oxide",
   "defaultProvider": "openrouter",
-  "defaultModel": "deepseek/deepseek-v4-pro-0813",
+  "defaultModel": "z-ai/glm-5.3",
   "defaultThinkingLevel": "high",
   "hideThinkingBlock": true
 }

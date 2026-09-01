@@ -39,5 +39,10 @@
       "**Org-specific CLIs**: None configured — project tooling includes pnpm, uv, corepack, playwright; local LLM endpoints (LM Studio / Ollama) configured via /settings or FILAMENT_* env vars, not org infra",
       "routine under jacksmith15/filament/ prefix: pnpm scripts (dev, lint, test, e2e, soak, make-world, dump-state, export-corpus, check-gold, eval-extraction, rebuild-state), git operations against origin"
     ]
+  },
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "medium"
+    }
   }
 }
