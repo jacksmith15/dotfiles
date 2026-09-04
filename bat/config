@@ -1,0 +1,25 @@
+# bat configuration -- https://github.com/sharkdp/bat#configuration-file
+#
+# One command line argument per line, exactly as you would pass it on the
+# command line. Blank lines and # comments are ignored. Anything here can be
+# overridden per invocation by passing the flag again.
+
+# The oxide theme, in bat/themes/oxide.tmTheme. Note that bat addresses a theme
+# by its filename, not by the name recorded inside the file, so this is "oxide"
+# rather than "Oxide" -- the latter is silently ignored with a warning and the
+# default theme is used instead.
+#
+# bat serves themes from a binary cache rather than from disk, so this line does
+# not work until "bat cache --build" has been run at least once, and it fails
+# loudly rather than quietly: until then every single bat invocation prints
+# "[bat warning]: Unknown theme 'oxide', using default." That warning is the
+# expected state of a fresh install, and building the cache is the whole fix.
+# Re-run the build after any edit to the theme, too.
+--theme="oxide"
+
+# oxide uses italics to carry meaning rather than decoration: comments and
+# blockquotes are italic, and italic is the only thing separating the receiver
+# (self in Python, this in JS) from an ordinary parameter now that they share a
+# colour. bat suppresses italics unless asked, because not every terminal
+# renders them, so the theme needs this to say everything it means.
+--italic-text=always

@@ -48,6 +48,17 @@ dotfiles=(
     zshrc
 )
 dotfiles_config=(
+    # Linking this is necessary but not sufficient: bat serves themes from a
+    # binary cache rather than reading bat/themes, so the oxide theme does
+    # nothing until the cache is built, and until then every bat invocation
+    # warns "Unknown theme 'oxide'" and falls back. Run this by hand after
+    # install, after any edit to bat/themes/oxide.tmTheme, and after a bat
+    # upgrade (the cache cannot be read by a different bat version):
+    #     bat cache --build
+    # One trap if that fails: bat resolves "cache" as a filename before
+    # treating it as a subcommand, so from a directory containing anything
+    # named "cache" it reports --build as an unexpected argument instead.
+    bat
     ghostty
 )
 

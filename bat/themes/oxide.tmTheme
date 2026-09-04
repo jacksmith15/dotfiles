@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+    Oxide for bat.
+
+    Matches the oxide theme used by vim (vim/colors/oxide.vim), the pi agent
+    (pi/agent/themes/oxide.json), Sublime Text (sublime/plugins/Oxide), ghostty
+    (ghostty/themes/oxide) and the zsh prompt
+    (oh-my-zsh/custom/themes/oxide.zsh-theme).
+
+    This is a port of sublime/plugins/Oxide/Oxide.sublime-color-scheme, which is
+    the authoritative version: it carries the reasoning behind every colour
+    assignment, and this file carries only what differs. The two are maintained
+    in parallel, the same way the vim and pi themes are. Anything changed there
+    should be changed here.
+
+    Format
+    ======
+    bat reads .tmTheme only. It silently ignores .sublime-color-scheme files
+    placed in this directory, which is why this is XML rather than a copy of the
+    Sublime file. Everything the Sublime scheme relies on does survive the
+    translation, because bat highlights through syntect, which implements
+    Sublime's selector syntax rather than TextMate's original: descendant
+    selectors, the exclusion operator, parenthesised alternation and the scoring
+    rules are all honoured. Only the container changed.
+
+    Installing
+    ==========
+    setup.sh links this whole directory to ~/.config/bat, and carries the exact
+    commands as shell comments, where flag names can be written literally (XML
+    comments cannot contain a double hyphen, which is why flags are named
+    bare below).
+
+    The one thing worth knowing here: bat reads themes from a binary cache
+    rather than from disk, so it will not see this file until the cache is
+    rebuilt, and will not see edits to it afterwards either. Rebuild with bat's
+    "cache" subcommand and its build flag, then confirm with the list-themes
+    flag. To make it the default, set theme="Oxide" in ~/.config/bat/config or
+    export BAT_THEME=Oxide.
+
+    One trap: the "cache" subcommand silently disappears when the working
+    directory contains a file or directory named "cache", because bat resolves
+    the argument as a filename first. It reports the build flag as an unexpected
+    argument, which does not point at the cause.
+
+    What bat cannot render
+    ======================
+    Three things in the Sublime scheme have no equivalent here, and the gaps are
+    in bat rather than in the translation:
+
+    1.  Per token backgrounds are dropped. bat paints foregrounds only and lets
+        the terminal background show through, so a rule setting just a
+        background renders as nothing at all. The affected rules are kept below
+        anyway, because other syntect consumers (delta) do honour them and
+        because dropping them would make this file diverge from the Sublime one
+        for no gain. Where a rule sets both, the foreground still applies.
+
+        This is also why the global background matters less than it looks: bat
+        never paints it. It is set correctly regardless, and it happens to be
+        exactly the background ghostty/themes/oxide paints, so oxide under bat
+        in ghostty comes out right by construction.
+
+    2.  Italics need opting into. bat suppresses them unless you pass the
+        italic-text=always flag, because not every terminal renders them.
+        Comments,
+        the receiver (self, this) and blockquotes all want italic; without the
+        flag they keep their colour and lose the slant. Worth setting in
+        ~/.config/bat/config alongside the theme.
+
+    3.  Some bundled syntaxes are older than Sublime Text's. bat vendors its
+        own copies, and a few predate scope names the Sublime scheme relies on.
+        Where that changes a colour, a compensating rule appears below with the
+        detail; see "Config key (legacy syntaxes)".
+
+    4.  Sublime's own panels have no counterpart. The rules for its inline
+        buffer diff (the diff.inserted family), its build output (message.*) and
+        its find results (constant.numeric.line-number) are dropped here. They
+        colour Sublime UI, not file content, so they would be dead weight. The
+        markup.inserted family is a different thing and is kept: that colours
+        actual diff files, which is exactly what bat is often pointed at.
+-->
+<plist version="1.0">
+<dict>
+    <key>name</key>
+    <string>Oxide</string>
+    <key>settings</key>
+    <array>
+
+        <!-- Globals. Of these bat reads foreground, gutterForeground (line
+             numbers under style=numbers) and lineHighlight (the -H flag). The
+             rest describe editor furniture bat has no concept of, and are here
+             so the file stays a faithful port usable by other syntect hosts. -->
+        <dict>
+            <key>settings</key>
+            <dict>
+                <key>background</key><string>#2e3436</string>
+                <key>foreground</key><string>#d7d7d7</string>
+                <key>accent</key><string>#5fafaf</string>
+                <key>caret</key><string>#d7d7d7</string>
+                <key>invisibles</key><string>#585d5e</string>
+
+                <key>lineHighlight</key><string>#383f41</string>
+                <key>selection</key><string>#626768</string>
+                <key>selectionBorder</key><string>#626768</string>
+                <key>inactiveSelection</key><string>#4d5659</string>
+                <key>misspelling</key><string>#d75f5f</string>
+                <key>shadow</key><string>#00000040</string>
+
+                <!-- Line numbers sit on 'border', one step dimmer than
+                     comments, so they recede further than anything you are
+                     meant to read. Sublime raises the current line's number to
+                     body text; bat has no current line, so the dim value is all
+                     of it. This is the same value vim's oxide gives LineNr. -->
+                <key>gutter</key><string>#2e3436</string>
+                <key>gutterForeground</key><string>#585d5e</string>
+
+                <key>guide</key><string>#424a4d</string>
+                <key>activeGuide</key><string>#5fafaf</string>
+                <key>stackGuide</key><string>#5fafaf80</string>
+
+                <key>highlight</key><string>#5fafaf</string>
+                <key>findHighlight</key><string>#afaf87</string>
+                <key>findHighlightForeground</key><string>#2e3436</string>
+
+                <key>bracketsForeground</key><string>#d7d7d7</string>
+                <key>bracketsOptions</key><string>underline</string>
+                <key>bracketContentsForeground</key><string>#5fafaf</string>
+                <key>bracketContentsOptions</key><string>underline</string>
+                <key>tagsForeground</key><string>#d7af5f</string>
+                <key>tagsOptions</key><string>stippled_underline</string>
+            </dict>
+        </dict>
+
+        <!-- Comments -->
+        <dict>
+            <key>name</key><string>Comment</string>
+            <key>scope</key><string>comment, punctuation.definition.comment</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#777b7c</string>
+                <key>fontStyle</key><string>italic</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>TODO / FIXME</string>
+            <key>scope</key><string>comment keyword.codetag, comment meta.toc-list.banner</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#d7af5f</string>
+                <key>fontStyle</key><string>bold italic</string>
+            </dict>
+        </dict>
+
+        <!-- Literals. Purple is for values the language hands you already made:
+             numbers, booleans, None, character literals. Strings get their own
+             colour because they are the one literal you read as prose. -->
+        <dict>
+            <key>name</key><string>Constant</string>
+            <key>scope</key><string>constant</string>
+            <key>settings</key><dict><key>foreground</key><string>#af87d7</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>String</string>
+            <key>scope</key><string>string, punctuation.definition.string</string>
+            <key>settings</key><dict><key>foreground</key><string>#afaf87</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Escape sequence</string>
+            <key>scope</key><string>constant.character.escape, constant.other.placeholder</string>
+            <key>settings</key><dict><key>foreground</key><string>#d7af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Regex special</string>
+            <key>scope</key><string>string.regexp keyword.operator, string.regexp keyword.control, string.regexp constant.other.character-class</string>
+            <key>settings</key><dict><key>foreground</key><string>#d7af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Interpolation</string>
+            <key>scope</key><string>punctuation.section.interpolation, punctuation.definition.template-expression</string>
+            <key>settings</key><dict><key>foreground</key><string>#d7af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Numeric suffix / base</string>
+            <key>scope</key><string>storage.type.numeric, punctuation.definition.numeric.base</string>
+            <key>settings</key><dict><key>foreground</key><string>#af87d7</string></dict>
+        </dict>
+
+        <!-- Names. The accents divide on whether a name is being introduced or
+             reached for: limegreen for the definition site, turquoise for a
+             name used as a callable or a type and for the names of slots,
+             orangeSubtle for parameter names at either end, offWhite for
+             everything else. The full argument is in the Sublime scheme. -->
+        <dict>
+            <key>name</key><string>Variable</string>
+            <key>scope</key><string>variable, variable.member, variable.other</string>
+            <key>settings</key><dict><key>foreground</key><string>#d7d7d7</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Parameter</string>
+            <key>scope</key><string>variable.parameter</string>
+            <key>settings</key><dict><key>foreground</key><string>#c29356</string></dict>
+        </dict>
+        <!-- The receiver reads as the parameter it effectively is. The italic
+             is what separates it from an ordinary parameter now that they share
+             a colour, so under bat this rule needs italic-text=always to carry
+             its full meaning; without it self and a plain parameter look
+             identical. The descendant selector catches self in a def
+             signature, where the parameter rule above would strip the italic. -->
+        <dict>
+            <key>name</key><string>Language variable</string>
+            <key>scope</key><string>variable.language, variable.parameter variable.language</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#c29356</string>
+                <key>fontStyle</key><string>italic</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Type parameter</string>
+            <key>scope</key><string>variable.parameter.type</string>
+            <key>settings</key><dict><key>foreground</key><string>#87af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Function call</string>
+            <key>scope</key><string>variable.function, variable.annotation</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Definition site</string>
+            <key>scope</key><string>entity.name.function, entity.name.class, entity.name.struct, entity.name.enum, entity.name.union, entity.name.trait, entity.name.interface, entity.name.impl, entity.name.type, entity.name.namespace, entity.name.constant, entity.name.label, entity.name.goto-label</string>
+            <key>settings</key><dict><key>foreground</key><string>#87af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Other entity names</string>
+            <key>scope</key><string>entity.name - (entity.name.section | entity.name.tag)</string>
+            <key>settings</key><dict><key>foreground</key><string>#87af5f</string></dict>
+        </dict>
+
+        <!-- Types and builtins. Turquoise means "a name the language gave you":
+             types, exceptions and builtins alike. -->
+        <dict>
+            <key>name</key><string>Library type / function / constant</string>
+            <key>scope</key><string>support.type, support.class, support.function, support.macro, support.module, support.other, support.constant</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Inherited class</string>
+            <key>scope</key><string>entity.other.inherited-class</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+
+        <!-- Keywords and operators. Import directives are keywords, not a
+             category of their own, so they sit on red with everything else.
+             That leaves turquoise meaning exactly one thing. -->
+        <dict>
+            <key>name</key><string>Keyword</string>
+            <key>scope</key><string>keyword, storage, storage.type, storage.modifier</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Operator</string>
+            <key>scope</key><string>keyword.operator</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Preprocessor</string>
+            <key>scope</key><string>meta.preprocessor, keyword.control.import, keyword.control.export, keyword.other.import</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+
+        <!-- Punctuation -->
+        <dict>
+            <key>name</key><string>Punctuation</string>
+            <key>scope</key><string>punctuation, punctuation.separator, punctuation.terminator, punctuation.accessor, punctuation.section</string>
+            <key>settings</key><dict><key>foreground</key><string>#777b7c</string></dict>
+        </dict>
+        <!-- The @ of a decorator marks a language construct the way def or
+             class does, so it takes the keyword colour. Only the marker is red;
+             the name after it keeps whatever it is. -->
+        <dict>
+            <key>name</key><string>Annotation punctuation</string>
+            <key>scope</key><string>punctuation.definition.annotation, punctuation.definition.decorator</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+
+        <!-- Markup and structured data -->
+        <dict>
+            <key>name</key><string>Tag name</string>
+            <key>scope</key><string>entity.name.tag</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Tag attribute</string>
+            <key>scope</key><string>entity.other.attribute-name</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <!-- One rule covers Python and JS object literals, JSON and YAML, which
+             all scope the key as meta.mapping.key. The quotes rule below must
+             always agree with this one: without it the quotes fall to the
+             String rule, which names punctuation.definition.string explicitly
+             and so out-specifies the plain selector on exactly those two
+             characters, giving a quoted key khaki quotes around a turquoise
+             name. -->
+        <dict>
+            <key>name</key><string>Mapping key</string>
+            <key>scope</key><string>meta.mapping.key string - meta.mapping.key meta meta | meta.mapping.key meta.mapping.key string - meta.mapping.key meta.mapping.key meta meta</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Mapping key quotes</string>
+            <key>scope</key><string>meta.mapping.key punctuation.definition.string - meta.mapping.key meta meta</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <!-- JavaScript and TypeScript object literal keys, which bat's older
+             syntax scopes meta.object-literal.key rather than meta.mapping.key.
+             The second rule is the same quote fix the mapping key rules need,
+             for the same reason: the String rule names
+             punctuation.definition.string explicitly and would otherwise claim
+             the quotes of a quoted key. -->
+        <dict>
+            <key>name</key><string>Object literal key (legacy syntax)</string>
+            <key>scope</key><string>meta.object-literal.key string, meta.object-literal.key</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Object literal key quotes (legacy syntax)</string>
+            <key>scope</key><string>meta.object-literal.key punctuation.definition.string</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+
+        <!-- Call sites in the same older syntaxes, which name the callee
+             entity.name.function rather than variable.function. The Definition
+             site rule claims that scope, so without this every method call in
+             JS and TS renders limegreen, as though it were being defined. The
+             meta.function-call ancestor is what distinguishes the two: it wraps
+             uses, never definitions. Python is unaffected either way; its
+             syntax already says variable.function. -->
+        <dict>
+            <key>name</key><string>Function call (legacy syntax)</string>
+            <key>scope</key><string>meta.function-call entity.name.function</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+
+        <!-- Keys in YAML, TOML and INI, which reach turquoise by a different
+             route. bat bundles older versions of these three syntaxes than
+             Sublime Text ships, and they predate meta.mapping.key: they scope a
+             key as entity.name.tag (YAML, TOML) or keyword.name (INI) instead.
+             Under the rules above that lands a key on red, the keyword colour,
+             which is the one clearly wrong answer. This rule is the mirror
+             image of a dead entity.name.tag.yaml rule removed from the Sublime
+             scheme, where the modern syntax makes it unreachable; here it is
+             the only thing that works. It sits below Tag name and is more
+             specific, so real HTML and XML tags keep red.
+
+             The decorator marker in JS and TS is the one thing here that cannot
+             be recovered. bat's syntax does not model decorators at all: it
+             leaves the @ as bare punctuation and the name after it as an
+             ordinary variable, so there is no scope to select. Python
+             decorators are unaffected and stay red.
+
+             This fixes plain keys only. bat's YAML syntax gives a quoted key no
+             key scope at all, so "a": 1 renders its key khaki, as a string. No
+             theme can distinguish it; the syntax discards the information
+             before the theme is consulted. -->
+        <dict>
+            <key>name</key><string>Config key (legacy syntaxes)</string>
+            <key>scope</key><string>entity.name.tag.yaml, entity.name.tag.toml, keyword.name</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>CSS property name</string>
+            <key>scope</key><string>support.type.property-name</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+
+        <!-- Invalid. The backgrounds here are among the rules bat drops; the
+             foregrounds still apply, which is enough to read them. -->
+        <dict>
+            <key>name</key><string>Invalid</string>
+            <key>scope</key><string>invalid</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#d75f5f</string>
+                <key>background</key><string>#4c3a3b</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Invalid deprecated</string>
+            <key>scope</key><string>invalid.deprecated</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#d7af5f</string>
+                <key>background</key><string>#4c3a3b</string>
+            </dict>
+        </dict>
+
+        <!-- Prose -->
+        <dict>
+            <key>name</key><string>Heading</string>
+            <key>scope</key><string>markup.heading, entity.name.section</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#d7d7d7</string>
+                <key>fontStyle</key><string>bold</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Heading punctuation</string>
+            <key>scope</key><string>markup.heading punctuation.definition.heading</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Link</string>
+            <key>scope</key><string>markup.underline.link, string.other.link</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#5fafaf</string>
+                <key>fontStyle</key><string>underline</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Link title</string>
+            <key>scope</key><string>meta.link string, meta.image string</string>
+            <key>settings</key><dict><key>foreground</key><string>#777b7c</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Bold</string>
+            <key>scope</key><string>markup.bold</string>
+            <key>settings</key><dict><key>fontStyle</key><string>bold</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Italic</string>
+            <key>scope</key><string>markup.italic</string>
+            <key>settings</key><dict><key>fontStyle</key><string>italic</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Underline</string>
+            <key>scope</key><string>markup.underline</string>
+            <key>settings</key><dict><key>fontStyle</key><string>underline</string></dict>
+        </dict>
+        <!-- Neither Sublime nor syntect has a strikethrough style, so struck
+             text borrows underline in both. -->
+        <dict>
+            <key>name</key><string>Strikethrough</string>
+            <key>scope</key><string>markup.strikethrough</string>
+            <key>settings</key><dict><key>fontStyle</key><string>underline</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Bold/italic markers</string>
+            <key>scope</key><string>text punctuation.definition.bold, text punctuation.definition.italic</string>
+            <key>settings</key><dict><key>foreground</key><string>#af87d7</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>List bullet</string>
+            <key>scope</key><string>markup.list punctuation.definition.list_item, markup.list.numbered.bullet</string>
+            <key>settings</key><dict><key>foreground</key><string>#af87d7</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Blockquote</string>
+            <key>scope</key><string>markup.quote, markup.quote punctuation.definition.blockquote</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#777b7c</string>
+                <key>fontStyle</key><string>italic</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Thematic break</string>
+            <key>scope</key><string>punctuation.definition.thematic-break</string>
+            <key>settings</key><dict><key>foreground</key><string>#585d5e</string></dict>
+        </dict>
+        <!-- Background only, so bat renders a fenced block exactly as it
+             renders the surrounding prose. Kept for parity with the Sublime
+             scheme and for hosts that do paint it. -->
+        <dict>
+            <key>name</key><string>Fenced code block</string>
+            <key>scope</key><string>markup.raw</string>
+            <key>settings</key><dict><key>background</key><string>#383f41</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Inline code</string>
+            <key>scope</key><string>markup.raw.inline</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#8eac72</string>
+                <key>background</key><string>#383f41</string>
+            </dict>
+        </dict>
+
+        <!-- Diffs. These colour diff files, which bat is often pointed at
+             directly (git show | bat, or bat a .patch). Sublime's separate
+             rules for its own inline buffer diff are dropped; see the header. -->
+        <dict>
+            <key>name</key><string>Diff header</string>
+            <key>scope</key><string>meta.diff, meta.diff.header</string>
+            <key>settings</key><dict><key>foreground</key><string>#87af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Diff range</string>
+            <key>scope</key><string>meta.diff.range, punctuation.definition.range.diff</string>
+            <key>settings</key><dict>
+                <key>foreground</key><string>#d7d7d7</string>
+                <key>fontStyle</key><string>bold</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Diff inserted</string>
+            <key>scope</key><string>markup.inserted</string>
+            <key>settings</key><dict><key>foreground</key><string>#87af5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Diff deleted</string>
+            <key>scope</key><string>markup.deleted</string>
+            <key>settings</key><dict><key>foreground</key><string>#d75f5f</string></dict>
+        </dict>
+        <dict>
+            <key>name</key><string>Diff changed</string>
+            <key>scope</key><string>markup.changed</string>
+            <key>settings</key><dict><key>foreground</key><string>#5fafaf</string></dict>
+        </dict>
+
+    </array>
+</dict>
+</plist>
