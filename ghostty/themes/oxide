@@ -1,0 +1,60 @@
+# Ghostty theme -- oxide
+#
+# Matches the oxide theme used by vim (vim/colors/oxide.vim), sublime, bat and
+# the pi agent (pi/agent/themes/oxide.json), which descend from the oxide zsh
+# prompt (oh-my-zsh/custom/themes/oxide.zsh-theme). Dark only.
+#
+# Those all paint with truecolor or xterm-256 indices above 15, so none of them
+# read this palette. What it colours is everything without its own scheme: ls,
+# git, fzf, tmux defaults, and so on.
+#
+# Palette
+# -------
+# Normal accents are oxide's own, slotted by hue:
+#   1  red      #d75f5f  red         (167)
+#   2  green    #87af5f  limegreen   (107)
+#   3  yellow   #d7af5f  orange      (179)  CLIs use yellow for warnings, which
+#                                           is what orange already means in oxide
+#   4  blue     #5f87af  blue        (67)   the one addition: oxide has no blue.
+#                                           turquoise with green stepped down
+#                                           one cube level, 30 degrees off cyan
+#   5  magenta  #af87d7  purple      (140)
+#   6  cyan     #5fafaf  turquoise   (73)
+#
+# Khaki (strings) has no ANSI slot to stand in for, so it has none.
+#
+# Bright accents (9-14) step every channel of the normal accent up one level of
+# the xterm-256 cube (5f -> 87 -> af -> d7 -> ff). Hue is preserved and every
+# value stays an exact cube index.
+#
+# Neutrals:
+#   0   #2e3436  bg        same as the background, as in Tango, so TUIs that
+#                          paint with slot 0 blend in
+#   8   #777b7c  muted     comments grey; autosuggestions, fzf and git use
+#                          slot 8 for secondary text
+#   7   #d7d7d7  offWhite  the foreground
+#   15  #eeeeee            (255)
+
+background = #2e3436
+foreground = #d7d7d7
+cursor-color = #d7d7d7
+cursor-text = #2e3436
+selection-background = #626768
+selection-foreground = #d7d7d7
+
+palette = 0=#2e3436
+palette = 1=#d75f5f
+palette = 2=#87af5f
+palette = 3=#d7af5f
+palette = 4=#5f87af
+palette = 5=#af87d7
+palette = 6=#5fafaf
+palette = 7=#d7d7d7
+palette = 8=#777b7c
+palette = 9=#ff8787
+palette = 10=#afd787
+palette = 11=#ffd787
+palette = 12=#87afd7
+palette = 13=#d7afff
+palette = 14=#87d7d7
+palette = 15=#eeeeee

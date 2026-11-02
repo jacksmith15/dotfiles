@@ -6,8 +6,8 @@
 "
 " The background is deliberately transparent: vim inherits whatever ghostty is
 " painting, so the scheme follows the terminal theme (and any transparency)
-" automatically. This works because oxide's own bg is #2e3436, which is exactly
-" the Tango [Dark] background ghostty is configured with.
+" automatically. This works because ghostty's oxide theme (ghostty/themes/oxide)
+" paints the same #2e3436.
 "
 " Every group is defined with both cterm and gui attributes, so it works in a
 " plain 256-colour terminal and picks up exact colours under 'termguicolors'.
@@ -224,15 +224,14 @@ hi! link diffFile      Directory
 hi! link diffLine      Title
 " }}}
 
-" {{{ :terminal -- deliberately still Tango [Dark]
-" These are not theme colours: they are what shell programs (ls, grep, git)
-" request by ANSI slot. Matching ghostty's palette means an embedded shell looks
-" identical to one outside vim, so this is the one place Tango belongs.
+" {{{ :terminal -- mirrors ghostty/themes/oxide
+" These are what shell programs (ls, grep, git) request by ANSI slot. Matching
+" ghostty's palette means an embedded shell looks identical to one outside vim.
 let g:terminal_ansi_colors = [
-    \ '#2e3436', '#cc0000', '#4e9a06', '#c4a000',
-    \ '#3465a4', '#75507b', '#06989a', '#d3d7cf',
-    \ '#555753', '#ef2929', '#8ae234', '#fce94f',
-    \ '#729fcf', '#ad7fa8', '#34e2e2', '#eeeeec',
+    \ '#2e3436', '#d75f5f', '#87af5f', '#d7af5f',
+    \ '#5f87af', '#af87d7', '#5fafaf', '#d7d7d7',
+    \ '#777b7c', '#ff8787', '#afd787', '#ffd787',
+    \ '#87afd7', '#d7afff', '#87d7d7', '#eeeeee',
     \ ]
 " }}}
 

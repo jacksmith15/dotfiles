@@ -52,7 +52,7 @@ window-padding-balance = true
 ################################################################################
 # Appearance
 
-theme = dark:tango-ptyxis-dark,light:tango-ptyxis-light
+theme = dark:oxide,light:tango-ptyxis-light
 
 font-family = Input
 
