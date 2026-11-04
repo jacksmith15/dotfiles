@@ -476,6 +476,16 @@ gwd() {
   fi
 }
 
+# Chafa image viewer
+
+chafa() {
+  if [ -n "$TMUX" ]; then
+    command chafa -f kitty --passthrough tmux "$@"
+  else
+    command chafa -f kitty "$@"
+  fi
+}
+
 
 ################################################################################
 # Final tasks.
