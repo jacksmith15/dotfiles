@@ -1,5 +1,5 @@
 #!/bin/bash
-# Claude Code status line: model, effort, context usage, plan usage / directory, branch
+# Claude Code status line: directory, branch, model, effort, context usage, plan usage
 
 input=$(cat)
 
@@ -55,16 +55,16 @@ if [ -n "$branch" ] && [[ "$dir" == *"/$branch" ]]; then
   dir_display="${dir_display%"/$branch"}"
 fi
 
-# Colors (truecolor, tuned for contrast against a #2E3436 background)
-COLOR_MODEL='\033[38;2;125;211;252m'   # sky blue
-COLOR_EFFORT='\033[38;2;240;171;252m'  # light magenta
-COLOR_CTX='\033[2;33m'                 # dim yellow
-COLOR_SESSION='\033[38;2;250;189;47m'  # amber
-COLOR_WEEK='\033[38;2;251;73;52m'      # orange-red
-COLOR_DIR='\033[38;2;147;172;138m'     # muted sage
-COLOR_BRANCH='\033[38;2;147;172;138m'  # muted sage
+# Colors (truecolor, from the oxide palette -- see ghostty/themes/oxide)
+COLOR_MODEL='\033[38;2;95;135;175m'    # oxide blue (ghostty's ANSI blue)
+COLOR_EFFORT='\033[38;2;175;135;215m'  # oxide purple
+COLOR_CTX='\033[38;2;175;175;135m'     # oxide khaki
+COLOR_SESSION='\033[38;2;215;175;95m'  # oxide orange
+COLOR_WEEK='\033[38;2;215;95;95m'      # oxide red
+COLOR_DIR='\033[38;2;135;175;95m'      # oxide limegreen, as the zsh prompt cwd
+COLOR_BRANCH='\033[38;2;95;175;175m'   # oxide turquoise, as the zsh prompt branch
 COLOR_RESET='\033[0m'
-SEP='\033[2;37m|\033[0m'
+SEP='\033[38;2;88;93;94m|\033[0m'       # oxide border
 
 join() {
   local out=""
@@ -92,15 +92,15 @@ is_projected_over() {
     }'
 }
 
-top_parts=()
-top_parts+=("$(printf "${COLOR_MODEL}%s${COLOR_RESET}" "$model")")
+session_parts=()
+session_parts+=("$(printf "${COLOR_MODEL}%s${COLOR_RESET}" "$model")")
 
 if [ -n "$effort" ]; then
-  top_parts+=("$(printf "${COLOR_EFFORT}effort:%s${COLOR_RESET}" "$effort")")
+  session_parts+=("$(printf "${COLOR_EFFORT}effort:%s${COLOR_RESET}" "$effort")")
 fi
 
 if [ -n "$used_pct" ]; then
-  top_parts+=("$(printf "${COLOR_CTX}ctx:%.0f%%${COLOR_RESET}" "$used_pct")")
+  session_parts+=("$(printf "${COLOR_CTX}ctx:%.0f%%${COLOR_RESET}" "$used_pct")")
 fi
 
 if [ -n "$session_pct" ]; then
@@ -108,7 +108,7 @@ if [ -n "$session_pct" ]; then
   if [ -n "$session_resets_at" ] && [ "$(is_projected_over "$session_pct" "$session_resets_at" 18000 "$now")" = "1" ]; then
     session_warn="!"
   fi
-  top_parts+=("$(printf "${COLOR_SESSION}5h:%.0f%%%s${COLOR_RESET}" "$session_pct" "$session_warn")")
+  session_parts+=("$(printf "${COLOR_SESSION}5h:%.0f%%%s${COLOR_RESET}" "$session_pct" "$session_warn")")
 fi
 
 if [ -n "$week_pct" ]; then
@@ -116,21 +116,16 @@ if [ -n "$week_pct" ]; then
   if [ -n "$week_resets_at" ] && [ "$(is_projected_over "$week_pct" "$week_resets_at" 604800 "$now")" = "1" ]; then
     week_warn="!"
   fi
-  top_parts+=("$(printf "${COLOR_WEEK}7d:%.0f%%%s${COLOR_RESET}" "$week_pct" "$week_warn")")
+  session_parts+=("$(printf "${COLOR_WEEK}7d:%.0f%%%s${COLOR_RESET}" "$week_pct" "$week_warn")")
 fi
 
-bottom_parts=()
+location_parts=()
 if [ -n "$dir_display" ]; then
-  bottom_parts+=("$(printf "${COLOR_DIR}%s/${COLOR_RESET}" "$dir_display")")
+  location_parts+=("$(printf "${COLOR_DIR}%s/${COLOR_RESET}" "$dir_display")")
 fi
 
 if [ -n "$branch" ]; then
-  bottom_parts+=("$(printf "${COLOR_BRANCH}%s${COLOR_RESET}" "$branch")")
+  location_parts+=("$(printf "${COLOR_BRANCH}%s${COLOR_RESET}" "$branch")")
 fi
 
-join "${top_parts[@]}"
-
-if [ "${#bottom_parts[@]}" -gt 0 ]; then
-  echo
-  join "${bottom_parts[@]}"
-fi
+join "${location_parts[@]}" "${session_parts[@]}"
