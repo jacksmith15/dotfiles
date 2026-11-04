@@ -182,6 +182,14 @@ export AWS_SDK_LOAD_CONFIG=true
 
 
 ################################################################################
+# Claude Code
+# Claude Code drops to 256 colours whenever $TMUX is set, ignoring COLORTERM,
+# which rounds the oxide theme's hex values onto the xterm cube. tmux passes
+# truecolor through here (Tc), so opt back in.
+export CLAUDE_CODE_TMUX_TRUECOLOR=1
+
+
+################################################################################
 # Custom Utility functions.
 
 ### Load .env into current shell
