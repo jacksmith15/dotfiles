@@ -63,6 +63,9 @@ COLOR_SESSION='\033[38;2;215;175;95m'  # oxide orange
 COLOR_WEEK='\033[38;2;215;95;95m'      # oxide red
 COLOR_DIR='\033[38;2;135;175;95m'      # oxide limegreen, as the zsh prompt cwd
 COLOR_BRANCH='\033[38;2;95;175;175m'   # oxide turquoise, as the zsh prompt branch
+COLOR_UNSTAGED='\033[38;2;215;175;95m' # oxide orange
+COLOR_STAGED='\033[38;2;135;175;95m'   # oxide limegreen
+COLOR_UNTRACKED='\033[38;2;215;95;95m' # oxide red
 COLOR_RESET='\033[0m'
 SEP='\033[38;2;88;93;94m|\033[0m'       # oxide border
 
@@ -119,13 +122,34 @@ if [ -n "$week_pct" ]; then
   session_parts+=("$(printf "${COLOR_WEEK}7d:%.0f%%%s${COLOR_RESET}" "$week_pct" "$week_warn")")
 fi
 
-location_parts=()
+# Mirrors the oxide zsh prompt: "<dir> on  <branch>" plus its change markers,
+# in the prompt's order and colours -- unstaged ● (orange), staged ✚
+# (limegreen), untracked ● (red).
+location=""
 if [ -n "$dir_display" ]; then
-  location_parts+=("$(printf "${COLOR_DIR}%s/${COLOR_RESET}" "$dir_display")")
+  location=$(printf "${COLOR_DIR}%s${COLOR_RESET}" "$dir_display")
 fi
 
 if [ -n "$branch" ]; then
-  location_parts+=("$(printf "${COLOR_BRANCH}%s${COLOR_RESET}" "$branch")")
+  # --no-optional-locks: the status line runs alongside whatever git commands
+  # the session is running, so it must not take index.lock.
+  git_status=$(git -C "$dir" --no-optional-locks status --porcelain 2>/dev/null)
+  markers=""
+  if grep -q '^.[^ ?!]' <<< "$git_status"; then
+    markers+="${COLOR_UNSTAGED} ●"
+  fi
+  if grep -q '^[^ ?!]' <<< "$git_status"; then
+    markers+="${COLOR_STAGED} ✚"
+  fi
+  if grep -q '^??' <<< "$git_status"; then
+    markers+="${COLOR_UNTRACKED} ●"
+  fi
+  location+=$(printf " on ${COLOR_BRANCH}\xee\x82\xa0 %s%b${COLOR_RESET}" "$branch" "$markers")
+fi
+
+location_parts=()
+if [ -n "$location" ]; then
+  location_parts+=("$location")
 fi
 
 join "${location_parts[@]}" "${session_parts[@]}"
